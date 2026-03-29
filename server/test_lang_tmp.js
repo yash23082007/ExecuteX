@@ -1,0 +1,31 @@
+const { executeInDocker } = require("./utils/dockerExecutor");
+const languageMap = require("./utils/languageMap");
+const fs = require("fs");
+const path = require("path");
+
+async function testLang(langKey, code, overrideCmd) {
+  const config = languageMap[langKey];
+  const testDir = path.join(__dirname, "temp_jobs", "test_" + langKey);
+  if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
+  
+  const filename = "main" + config.ext;
+  const actualFilename = (langKey === 'java' || langKey === 'csharp') ? "Main" + config.ext : filename;
+  
+  fs.writeFileSync(path.join(testDir, actualFilename), code);
+  
+  console.log(`Testing ${config.displayName}...`);
+  const cmd = overrideCmd ? overrideCmd(actualFilename) : config.cmd(actualFilename);
+  const result = await executeInDocker(config.image, cmd, testDir);
+  console.log(result);
+  
+  fs.rmSync(testDir, { recursive: true, force: true });
+}
+
+async function runAll() {
+  await testLang("c", '#include <stdio.h>\\nint main() { printf("Hello C\\n"); return 0; }', (f) => `sh -c "gcc ${f} -o /tmp/out && /tmp/out"`);
+  await testLang("cpp", '#include <iostream>\\nint main() { std::cout << "Hello C++\\n"; return 0; }', (f) => `sh -c "g++ ${f} -o /tmp/out && /tmp/out"`);
+  await testLang("typescript", 'const x: string = "Hello TS"; console.log(x);');
+  await testLang("csharp", 'using System; class Program { static void Main() { Console.WriteLine("Hello C#"); } }', (f) => `sh -c "mcs -out:/tmp/out.exe ${f} && mono /tmp/out.exe"`);
+}
+
+runAll();
