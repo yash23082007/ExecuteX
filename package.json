@@ -1,0 +1,17 @@
+{
+  "name": "executex",
+  "version": "1.0.0",
+  "description": "ExecuteX — 20-Language Online Compiler Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "docker-dev": "docker-compose up --build",
+    "docker-prod": "docker-compose -f docker-compose.yml up -d --build",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
