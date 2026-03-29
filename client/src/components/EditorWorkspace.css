@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════════════════════
+   Editor Panel — Premium IDE
+   ═══════════════════════════════════════════════════════════ */
+
+.edpanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--ex-bg-2);
+  overflow: hidden;
+}
+
+/* Panel Header with traffic lights */
+.edpanel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--ex-bg-3);
+  border-bottom: 1px solid var(--ex-border-2);
+  box-shadow: var(--ex-shadow-inset);
+}
+
+.edpanel__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.edpanel__dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  transition: all var(--dur) var(--ease);
+  cursor: default;
+}
+.edpanel__dot--red { background: #f87171; box-shadow: inset 0 -1px 1px rgba(0,0,0,0.15); }
+.edpanel__dot--yellow { background: #fbbf24; box-shadow: inset 0 -1px 1px rgba(0,0,0,0.15); }
+.edpanel__dot--green { background: #34d399; box-shadow: inset 0 -1px 1px rgba(0,0,0,0.15); }
+
+.edpanel__dot:hover { filter: brightness(1.2); transform: scale(1.1); }
+
+.edpanel__label {
+  font: 500 11px/1 var(--font-body);
+  color: var(--ex-text-3);
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Tab bar */
+.edpanel__tab-bar {
+  display: flex;
+  height: var(--ex-tab-h);
+  background: var(--ex-bg-3);
+  border-bottom: 1px solid var(--ex-border-2);
+}
+
+.edpanel__tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 14px;
+  font-size: 11px;
+  color: var(--ex-text-3);
+  border-right: 1px solid var(--ex-border-2);
+  position: relative;
+  cursor: default;
+  transition: color var(--dur-f);
+}
+
+.edpanel__tab--active {
+  color: var(--ex-text-1);
+  background: var(--ex-bg-2);
+}
+
+.edpanel__tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ex-brand-from), var(--ex-brand-to));
+  border-radius: 2px 2px 0 0;
+}
+
+.edpanel__tab-ico {
+  color: var(--ex-accent);
+  opacity: 0.6;
+}
+
+.edpanel__tab-name {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+
+.edpanel__tab-modified {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--ex-accent);
+  opacity: 0.6;
+  margin-left: 1px;
+}
+
+/* Body */
+.edpanel__body {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Loading */
+.edpanel__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--ex-text-4);
+  font-size: 11px;
+}
+
+.edpanel__loading-bar {
+  width: 100px; height: 2px;
+  background: var(--ex-bg-5);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.edpanel__loading-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, var(--ex-accent), transparent);
+  animation: shimmer 1.2s infinite;
+  background-size: 200% 100%;
+}
