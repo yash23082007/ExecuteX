@@ -1,0 +1,195 @@
+/* ═══════════════════════════════════════════════════════════
+   ExecuteX — Premium Design System v2
+   Handcrafted with intention. Every pixel considered.
+   ═══════════════════════════════════════════════════════════ */
+
+@import "tailwindcss";
+
+/* ─── Brand Palette ────────────────────────────────────── */
+:root {
+  --ex-brand-from: #6366f1;
+  --ex-brand-via: #8b5cf6;
+  --ex-brand-to: #a78bfa;
+
+  --ex-accent: #818cf8;
+  --ex-accent-hover: #a5b4fc;
+  --ex-accent-muted: rgba(129, 140, 248, 0.06);
+  --ex-accent-subtle: rgba(129, 140, 248, 0.10);
+  --ex-accent-glow: rgba(129, 140, 248, 0.18);
+  --ex-accent-border: rgba(129, 140, 248, 0.22);
+
+  --ex-green: #34d399;
+  --ex-green-dim: rgba(52, 211, 153, 0.12);
+  --ex-red: #f87171;
+  --ex-red-dim: rgba(248, 113, 113, 0.10);
+  --ex-amber: #fbbf24;
+  --ex-amber-dim: rgba(251, 191, 36, 0.10);
+  --ex-blue: #60a5fa;
+
+  /* ── DARK (default) ── */
+  --ex-bg-0: #08080c;
+  --ex-bg-1: #0c0c11;
+  --ex-bg-2: #101018;
+  --ex-bg-3: #15151f;
+  --ex-bg-4: #1b1b28;
+  --ex-bg-5: #212130;
+  --ex-bg-hover: #26263a;
+  --ex-bg-glass: rgba(12, 12, 17, 0.82);
+
+  --ex-border-1: rgba(255,255,255,0.055);
+  --ex-border-2: rgba(255,255,255,0.035);
+  --ex-border-focus: rgba(129,140,248,0.35);
+  --ex-border-glass: rgba(255,255,255,0.07);
+
+  --ex-text-1: #ededf4;
+  --ex-text-2: #8e8ea3;
+  --ex-text-3: #55556a;
+  --ex-text-4: #38384a;
+
+  --ex-shadow-xs: 0 1px 2px rgba(0,0,0,0.4);
+  --ex-shadow-sm: 0 2px 6px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.2);
+  --ex-shadow-md: 0 4px 14px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+  --ex-shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --ex-shadow-xl: 0 20px 60px rgba(0,0,0,0.55);
+  --ex-shadow-inset: inset 0 1px 0 rgba(255,255,255,0.03);
+  --ex-shadow-glow: 0 0 20px rgba(129,140,248,0.12);
+  --ex-shadow-brand: 0 2px 16px rgba(99,102,241,0.30);
+
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+
+  --ex-nav-h: 50px;
+  --ex-status-h: 24px;
+  --ex-tab-h: 35px;
+
+  --ex-r-xs: 4px;
+  --ex-r-sm: 6px;
+  --ex-r-md: 8px;
+  --ex-r-lg: 10px;
+  --ex-r-xl: 14px;
+  --ex-r-pill: 100px;
+
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-f: 120ms;
+  --dur: 200ms;
+  --dur-s: 350ms;
+}
+
+/* ─── LIGHT THEME ──────────────────────────────────────── */
+[data-theme="light"] {
+  --ex-bg-0: #f4f5f9;
+  --ex-bg-1: #eceef5;
+  --ex-bg-2: #ffffff;
+  --ex-bg-3: #f7f8fc;
+  --ex-bg-4: #ffffff;
+  --ex-bg-5: #ebedf5;
+  --ex-bg-hover: #e2e4ef;
+  --ex-bg-glass: rgba(244, 245, 249, 0.88);
+
+  --ex-border-1: rgba(0,0,0,0.07);
+  --ex-border-2: rgba(0,0,0,0.04);
+  --ex-border-focus: rgba(99,102,241,0.40);
+  --ex-border-glass: rgba(0,0,0,0.05);
+
+  --ex-text-1: #171728;
+  --ex-text-2: #5e5e7d;
+  --ex-text-3: #9898b0;
+  --ex-text-4: #c2c2d4;
+
+  --ex-shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --ex-shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03);
+  --ex-shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+  --ex-shadow-lg: 0 8px 28px rgba(0,0,0,0.09);
+  --ex-shadow-xl: 0 16px 48px rgba(0,0,0,0.10);
+  --ex-shadow-inset: inset 0 1px 0 rgba(255,255,255,0.7);
+  --ex-shadow-glow: 0 0 16px rgba(99,102,241,0.08);
+  --ex-shadow-brand: 0 2px 14px rgba(99,102,241,0.18);
+
+  --ex-accent-muted: rgba(99,102,241,0.04);
+  --ex-accent-subtle: rgba(99,102,241,0.07);
+  --ex-accent-glow: rgba(99,102,241,0.10);
+  --ex-green-dim: rgba(16,185,129,0.08);
+  --ex-red-dim: rgba(239,68,68,0.07);
+  --ex-amber-dim: rgba(245,158,11,0.08);
+}
+
+/* ─── RESET ────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ex-bg-0);
+  color: var(--ex-text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+}
+
+#root {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ex-bg-1);
+}
+
+/* ─── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--ex-text-4);
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ex-text-3); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+::selection {
+  background: rgba(129,140,248,0.28);
+  color: inherit;
+}
+
+/* ─── Split Gutter ─────────────────────────────────────── */
+.gutter {
+  background: var(--ex-border-1);
+  position: relative;
+  z-index: 20;
+  transition: background var(--dur) var(--ease);
+}
+.gutter:hover { background: var(--ex-accent); }
+.gutter-horizontal { cursor: col-resize; }
+.gutter-horizontal::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: -4px; right: -4px;
+}
+
+/* ─── Keyframes ────────────────────────────────────────── */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96) translateY(4px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes dotBounce {
+  0%,80%,100% { transform: translateY(0); opacity: 0.35; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Helpers ──────────────────────────────────────────── */
+.font-mono { font-family: var(--font-mono) !important; }
