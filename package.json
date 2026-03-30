@@ -11,6 +11,12 @@
     "docker-prod": "docker-compose -f docker-compose.yml up -d --build",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install"
   },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.5.0",
+    "uuid": "^9.0.1"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

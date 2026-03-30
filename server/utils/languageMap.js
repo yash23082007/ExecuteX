@@ -1,12 +1,12 @@
 // server/utils/languageMap.js
-// Central configuration for all 20 supported languages.
-// Maps language keys to their Docker image, file extension, and compile/run command.
+// Central configuration for all supported languages.
+// Migration: Updated with Piston-compatible IDs and versions for Vercel deployment.
 
 const languageMap = {
   c: {
-    image: "gcc:latest",
+    pistonId: "c",
+    pistonVersion: "10.2.0",
     ext: ".c",
-    cmd: (filename) => `sh -c "gcc ${filename} -o /tmp/out && /tmp/out"`,
     displayName: "C",
     category: "Core CS / Systems",
     boilerplate: `#include <stdio.h>
@@ -17,9 +17,9 @@ int main() {
 }`,
   },
   cpp: {
-    image: "gcc:latest",
+    pistonId: "cpp",
+    pistonVersion: "10.2.0",
     ext: ".cpp",
-    cmd: (filename) => `sh -c "g++ ${filename} -o /tmp/out && /tmp/out"`,
     displayName: "C++",
     category: "Core CS / Systems",
     boilerplate: `#include <iostream>
@@ -31,9 +31,9 @@ int main() {
 }`,
   },
   java: {
-    image: "amazoncorretto:21-alpine",
+    pistonId: "java",
+    pistonVersion: "15.0.2", // Piston version
     ext: ".java",
-    cmd: (filename) => `sh -c "javac ${filename} && java Main"`,
     displayName: "Java",
     category: "Enterprise Backend",
     boilerplate: `public class Main {
@@ -43,9 +43,9 @@ int main() {
 }`,
   },
   csharp: {
-    image: "mono:slim",
+    pistonId: "csharp",
+    pistonVersion: "6.12.0",
     ext: ".cs",
-    cmd: (filename) => `sh -c "mcs -nologo -out:/tmp/out.exe ${filename} && mono /tmp/out.exe"`,
     displayName: "C#",
     category: "Enterprise Backend",
     boilerplate: `using System;
@@ -57,45 +57,45 @@ class Program {
 }`,
   },
   python: {
-    image: "python:3.12-alpine",
+    pistonId: "python",
+    pistonVersion: "3.10.0",
     ext: ".py",
-    cmd: (filename) => `python3 ${filename}`,
     displayName: "Python",
     category: "AI / Data Science",
     boilerplate: `# Python — The gold standard for AI & automation
 print("Hello, ExecuteX!")`,
   },
   r: {
-    image: "rhub/r-minimal",
+    pistonId: "r",
+    pistonVersion: "4.0.3",
     ext: ".r",
-    cmd: (filename) => `Rscript ${filename}`,
     displayName: "R",
     category: "Data Science",
     boilerplate: `# R — Statistical Computing
 cat("Hello, ExecuteX!\\n")`,
   },
   julia: {
-    image: "julia:alpine",
+    pistonId: "julia",
+    pistonVersion: "1.5.3",
     ext: ".jl",
-    cmd: (filename) => `julia ${filename}`,
     displayName: "Julia",
     category: "Data Science",
     boilerplate: `# Julia — High-performance numerical computing
 println("Hello, ExecuteX!")`,
   },
   javascript: {
-    image: "node:alpine",
+    pistonId: "javascript",
+    pistonVersion: "16.3.0",
     ext: ".js",
-    cmd: (filename) => `node ${filename}`,
     displayName: "JavaScript",
     category: "Web / Async",
     boilerplate: `// JavaScript — V8 Engine
 console.log("Hello, ExecuteX!");`,
   },
   typescript: {
-    image: "denoland/deno:alpine",
+    pistonId: "typescript",
+    pistonVersion: "1.10.0", // Deno/TS
     ext: ".ts",
-    cmd: (filename) => `deno run ${filename}`,
     displayName: "TypeScript",
     category: "Web / Typed",
     boilerplate: `// TypeScript — Type-safe JavaScript
@@ -103,9 +103,9 @@ const greeting: string = "Hello, ExecuteX!";
 console.log(greeting);`,
   },
   php: {
-    image: "php:cli-alpine",
+    pistonId: "php",
+    pistonVersion: "8.0.0",
     ext: ".php",
-    cmd: (filename) => `php ${filename}`,
     displayName: "PHP",
     category: "Web / Scripting",
     boilerplate: `<?php
@@ -114,18 +114,18 @@ echo "Hello, ExecuteX!\\n";
 ?>`,
   },
   ruby: {
-    image: "ruby:alpine",
+    pistonId: "ruby",
+    pistonVersion: "3.0.0",
     ext: ".rb",
-    cmd: (filename) => `ruby ${filename}`,
     displayName: "Ruby",
     category: "Web / Scripting",
     boilerplate: `# Ruby — Elegant scripting
 puts "Hello, ExecuteX!"`,
   },
   go: {
-    image: "golang:alpine",
+    pistonId: "go",
+    pistonVersion: "1.16.2",
     ext: ".go",
-    cmd: (filename) => `go run ${filename}`,
     displayName: "Go",
     category: "Modern Systems",
     boilerplate: `package main
@@ -137,9 +137,9 @@ func main() {
 }`,
   },
   rust: {
-    image: "rust:alpine",
+    pistonId: "rust",
+    pistonVersion: "1.50.0",
     ext: ".rs",
-    cmd: (filename) => `sh -c "rustc ${filename} -o /tmp/out && /tmp/out"`,
     displayName: "Rust",
     category: "Modern Systems",
     boilerplate: `fn main() {
@@ -147,9 +147,9 @@ func main() {
 }`,
   },
   kotlin: {
-    image: "zenika/kotlin",
+    pistonId: "kotlin",
+    pistonVersion: "1.5.0",
     ext: ".kt",
-    cmd: (filename) => `sh -c "kotlinc ${filename} -include-runtime -d /tmp/out.jar 2>/dev/null && java -jar /tmp/out.jar"`,
     displayName: "Kotlin",
     category: "Mobile / JVM",
     boilerplate: `fun main() {
@@ -157,18 +157,18 @@ func main() {
 }`,
   },
   swift: {
-    image: "swift:slim",
+    pistonId: "swift",
+    pistonVersion: "5.3.3",
     ext: ".swift",
-    cmd: (filename) => `swift ${filename}`,
     displayName: "Swift",
     category: "Mobile / Apple",
     boilerplate: `// Swift — iOS & macOS development
 print("Hello, ExecuteX!")`,
   },
   scala: {
-    image: "sbtscala/scala-sbt:eclipse-temurin-alpine-21.0.6_7_1.10.11_3.6.4",
+    pistonId: "scala",
+    pistonVersion: "2.13.5",
     ext: ".scala",
-    cmd: (filename) => `scala ${filename}`,
     displayName: "Scala",
     category: "Data / JVM",
     boilerplate: `object Main {
@@ -178,9 +178,9 @@ print("Hello, ExecuteX!")`,
 }`,
   },
   haskell: {
-    image: "haskell:slim",
+    pistonId: "haskell",
+    pistonVersion: "8.10.4",
     ext: ".hs",
-    cmd: (filename) => `runghc ${filename}`,
     displayName: "Haskell",
     category: "Pure Functional",
     boilerplate: `-- Haskell — Pure functional programming
@@ -188,18 +188,18 @@ main :: IO ()
 main = putStrLn "Hello, ExecuteX!"`,
   },
   lua: {
-    image: "nickblah/lua:alpine",
+    pistonId: "lua",
+    pistonVersion: "5.4.2",
     ext: ".lua",
-    cmd: (filename) => `lua ${filename}`,
     displayName: "Lua",
     category: "Embedded / Gaming",
     boilerplate: `-- Lua — Lightweight scripting
 print("Hello, ExecuteX!")`,
   },
   bash: {
-    image: "bash:alpine",
+    pistonId: "bash",
+    pistonVersion: "5.1.0",
     ext: ".sh",
-    cmd: (filename) => `bash ${filename}`,
     displayName: "Bash",
     category: "Shell Scripting",
     boilerplate: `#!/bin/bash
@@ -207,9 +207,9 @@ print("Hello, ExecuteX!")`,
 echo "Hello, ExecuteX!"`,
   },
   perl: {
-    image: "perl:alpine",
+    pistonId: "perl",
+    pistonVersion: "5.32.1",
     ext: ".pl",
-    cmd: (filename) => `perl ${filename}`,
     displayName: "Perl",
     category: "Legacy Scripting",
     boilerplate: `#!/usr/bin/perl
@@ -221,3 +221,4 @@ print "Hello, ExecuteX!\\n";`,
 };
 
 module.exports = languageMap;
+

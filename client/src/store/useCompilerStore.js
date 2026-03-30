@@ -154,7 +154,7 @@ const useCompilerStore = create((set, get) => ({
       });
     } catch (err) {
       set({
-        output: `❌ Connection failed: ${err.message}\n\nMake sure the ExecuteX server is running on port 3001.`,
+        output: `❌ Connection failed: ${err.message}\n\nPlease check your internet connection or try again later.`,
         hasError: true,
         isRunning: false,
       });
