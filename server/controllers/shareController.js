@@ -7,7 +7,7 @@ const { nanoid } = require("nanoid");
 /**
  * POST /api/v1/share
  * Body: { language: "python", code: "print('hello')" }
- * Returns: { slug: "xt78qz1a" }
+ * Returns: { success: true, share: { slug: "xt78qz1a" } }
  */
 async function createShare(req, res) {
   const { language, code } = req.body;
@@ -28,8 +28,9 @@ async function createShare(req, res) {
 
     return res.json({
       success: true,
-      slug,
-      url: `/s/${slug}`,
+      share: {
+        slug,
+      },
     });
   } catch (err) {
     console.error("[Share] Error creating snippet:", err);
@@ -42,7 +43,7 @@ async function createShare(req, res) {
 
 /**
  * GET /api/v1/share/:slug
- * Returns: { language: "python", code: "print('hello')" }
+ * Returns: { success: true, share: { language: "python", code: "print('hello')" } }
  */
 async function getShare(req, res) {
   const { slug } = req.params;
@@ -58,9 +59,11 @@ async function getShare(req, res) {
 
     return res.json({
       success: true,
-      language: snippet.language,
-      code: snippet.code,
-      createdAt: snippet.createdAt,
+      share: {
+        language: snippet.language,
+        code: snippet.code,
+        createdAt: snippet.createdAt,
+      },
     });
   } catch (err) {
     console.error("[Share] Error retrieving snippet:", err);
@@ -72,3 +75,4 @@ async function getShare(req, res) {
 }
 
 module.exports = { createShare, getShare };
+
