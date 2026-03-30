@@ -12,6 +12,10 @@ services:
       - NODE_ENV=production
       - MONGO_URI=mongodb://mongo:27017/executex
       - TEMP_JOBS_VOLUME=executex_temp_jobs
+      - PISTON_API_URL=http://piston:2000/api/v2/piston/execute
+    depends_on:
+      - piston
+      - mongo
     volumes:
       # Mount the Docker socket so the container can spawn jobs (Docker-out-of-Docker)
       - /var/run/docker.sock:/var/run/docker.sock
@@ -38,7 +42,11 @@ services:
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
-
+  piston:
+    image: ghcr.io/engineer-man/piston
+    ports:
+      - "2000:2000"
+    restart: unless-stopped
 volumes:
   mongo_data:
   executex_temp_jobs:

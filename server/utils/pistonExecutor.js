@@ -1,7 +1,7 @@
 // server/utils/pistonExecutor.js
 // Migration: Replaces local Docker execution with the Piston API for Vercel deployment.
 
-const PISTON_API_URL = "https://emkc.org/api/v2/piston/execute";
+const PISTON_API_URL = process.env.PISTON_API_URL || "https://emkc.org/api/v2/piston/execute";
 
 /**
  * Executes code using the Piston API (serverless compatible).
@@ -14,9 +14,14 @@ async function executeInPiston(language, version, code) {
   const startTime = Date.now();
   
   try {
+    const headers = { "Content-Type": "application/json" };
+    if (process.env.PISTON_API_KEY) {
+      headers["Authorization"] = process.env.PISTON_API_KEY;
+    }
+
     const response = await fetch(PISTON_API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         language,
         version: version || "*",
