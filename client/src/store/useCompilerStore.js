@@ -7,26 +7,24 @@ const API_BASE = "/api/v1";
 
 // Language configurations (mirrored from server for offline use)
 const LANGUAGES = [
-  { key: "c", displayName: "C", category: "Core CS / Systems", boilerplate: '#include <stdio.h>\n\nint main() {\n    printf("Hello, ExecuteX!\\n");\n    return 0;\n}' },
-  { key: "cpp", displayName: "C++", category: "Core CS / Systems", boilerplate: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, ExecuteX!" << endl;\n    return 0;\n}' },
-  { key: "java", displayName: "Java", category: "Enterprise Backend", boilerplate: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, ExecuteX!");\n    }\n}' },
-  { key: "csharp", displayName: "C#", category: "Enterprise Backend", boilerplate: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, ExecuteX!");\n    }\n}' },
-  { key: "python", displayName: "Python", category: "AI / Data Science", boilerplate: '# Python — The gold standard for AI & automation\nprint("Hello, ExecuteX!")' },
-  { key: "r", displayName: "R", category: "Data Science", boilerplate: '# R — Statistical Computing\ncat("Hello, ExecuteX!\\n")' },
-  { key: "julia", displayName: "Julia", category: "Data Science", boilerplate: '# Julia — High-performance numerical computing\nprintln("Hello, ExecuteX!")' },
-  { key: "javascript", displayName: "JavaScript", category: "Web / Async", boilerplate: '// JavaScript — V8 Engine\nconsole.log("Hello, ExecuteX!");' },
-  { key: "typescript", displayName: "TypeScript", category: "Web / Typed", boilerplate: '// TypeScript — Type-safe JavaScript\nconst greeting: string = "Hello, ExecuteX!";\nconsole.log(greeting);' },
-  { key: "php", displayName: "PHP", category: "Web / Scripting", boilerplate: '<?php\n// PHP — Powers the web\necho "Hello, ExecuteX!\\n";\n?>' },
-  { key: "ruby", displayName: "Ruby", category: "Web / Scripting", boilerplate: '# Ruby — Elegant scripting\nputs "Hello, ExecuteX!"' },
-  { key: "go", displayName: "Go", category: "Modern Systems", boilerplate: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, ExecuteX!")\n}' },
-  { key: "rust", displayName: "Rust", category: "Modern Systems", boilerplate: 'fn main() {\n    println!("Hello, ExecuteX!");\n}' },
-  { key: "kotlin", displayName: "Kotlin", category: "Mobile / JVM", boilerplate: 'fun main() {\n    println("Hello, ExecuteX!")\n}' },
-  { key: "swift", displayName: "Swift", category: "Mobile / Apple", boilerplate: '// Swift — iOS & macOS development\nprint("Hello, ExecuteX!")' },
-  { key: "scala", displayName: "Scala", category: "Data / JVM", boilerplate: 'object Main {\n  def main(args: Array[String]): Unit = {\n    println("Hello, ExecuteX!")\n  }\n}' },
-  { key: "haskell", displayName: "Haskell", category: "Pure Functional", boilerplate: '-- Haskell — Pure functional programming\nmain :: IO ()\nmain = putStrLn "Hello, ExecuteX!"' },
-  { key: "lua", displayName: "Lua", category: "Embedded / Gaming", boilerplate: '-- Lua — Lightweight scripting\nprint("Hello, ExecuteX!")' },
-  { key: "bash", displayName: "Bash", category: "Shell Scripting", boilerplate: '#!/bin/bash\n# Bash — Shell scripting\necho "Hello, ExecuteX!"' },
-  { key: "perl", displayName: "Perl", category: "Legacy Scripting", boilerplate: '#!/usr/bin/perl\n# Perl — Text processing pioneer\nuse strict;\nuse warnings;\nprint "Hello, ExecuteX!\\n";' },
+  { key: "c", wandboxId: "gcc-head-c", displayName: "C", category: "Core CS / Systems", boilerplate: '#include <stdio.h>\n\nint main() {\n    printf("Hello, ExecuteX!\\n");\n    return 0;\n}' },
+  { key: "cpp", wandboxId: "gcc-head", displayName: "C++", category: "Core CS / Systems", boilerplate: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, ExecuteX!" << endl;\n    return 0;\n}' },
+  { key: "java", wandboxId: "openjdk-jdk-22+36", displayName: "Java", category: "Enterprise Backend", boilerplate: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, ExecuteX!");\n    }\n}' },
+  { key: "csharp", wandboxId: "mono-6.12.0.199", displayName: "C#", category: "Enterprise Backend", boilerplate: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, ExecuteX!");\n    }\n}' },
+  { key: "python", wandboxId: "cpython-3.14.0", displayName: "Python", category: "AI / Data Science", boilerplate: '# Python — The gold standard for AI & automation\nprint("Hello, ExecuteX!")' },
+  { key: "r", wandboxId: "r-4.4.1", displayName: "R", category: "Data Science", boilerplate: '# R — Statistical Computing\ncat("Hello, ExecuteX!\\n")' },
+  { key: "julia", wandboxId: "julia-1.10.5", displayName: "Julia", category: "Data Science", boilerplate: '# Julia — High-performance numerical computing\nprintln("Hello, ExecuteX!")' },
+  { key: "javascript", wandboxId: "nodejs-20.17.0", displayName: "JavaScript", category: "Web / Async", boilerplate: '// JavaScript — V8 Engine\nconsole.log("Hello, ExecuteX!");' },
+  { key: "typescript", wandboxId: "typescript-5.6.2", displayName: "TypeScript", category: "Web / Typed", boilerplate: '// TypeScript — Type-safe JavaScript\nconst greeting: string = "Hello, ExecuteX!";\nconsole.log(greeting);' },
+  { key: "php", wandboxId: "php-8.3.12", displayName: "PHP", category: "Web / Scripting", boilerplate: '<?php\n// PHP — Powers the web\necho "Hello, ExecuteX!\\n";\n?>' },
+  { key: "ruby", wandboxId: "ruby-3.4.1", displayName: "Ruby", category: "Web / Scripting", boilerplate: '# Ruby — Elegant scripting\nputs "Hello, ExecuteX!"' },
+  { key: "go", wandboxId: "go-1.23.2", displayName: "Go", category: "Modern Systems", boilerplate: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, ExecuteX!")\n}' },
+  { key: "rust", wandboxId: "rust-1.82.0", displayName: "Rust", category: "Modern Systems", boilerplate: 'fn main() {\n    println!("Hello, ExecuteX!");\n}' },
+      { key: "scala", wandboxId: "scala-3.3.4", displayName: "Scala", category: "Data / JVM", boilerplate: 'object Main {\n  def main(args: Array[String]): Unit = {\n    println("Hello, ExecuteX!")\n  }\n}' },
+  { key: "haskell", wandboxId: "ghc-9.10.1", displayName: "Haskell", category: "Pure Functional", boilerplate: '-- Haskell — Pure functional programming\nmain :: IO ()\nmain = putStrLn "Hello, ExecuteX!"' },
+  { key: "lua", wandboxId: "lua-5.4.7", displayName: "Lua", category: "Embedded / Gaming", boilerplate: '-- Lua — Lightweight scripting\nprint("Hello, ExecuteX!")' },
+  { key: "bash", wandboxId: "bash", displayName: "Bash", category: "Shell Scripting", boilerplate: '#!/bin/bash\n# Bash — Shell scripting\necho "Hello, ExecuteX!"' },
+  { key: "perl", wandboxId: "perl-5.42.0", displayName: "Perl", category: "Legacy Scripting", boilerplate: '#!/usr/bin/perl\n# Perl — Text processing pioneer\nuse strict;\nuse warnings;\nprint "Hello, ExecuteX!\\n";' },
 ];
 
 // Monaco language ID mapping
@@ -44,9 +42,7 @@ const MONACO_LANG_MAP = {
   ruby: "ruby",
   go: "go",
   rust: "rust",
-  kotlin: "kotlin",
-  swift: "swift",
-  scala: "scala",
+      scala: "scala",
   haskell: "haskell",
   lua: "lua",
   bash: "shell",
@@ -137,19 +133,37 @@ const useCompilerStore = create((set, get) => ({
     });
 
     try {
-      const res = await fetch(`${API_BASE}/compile`, {
+      const langConfig = get().languages.find(l => l.key === selectedLanguage);
+      const startTime = Date.now();
+      
+      const res = await fetch("https://wandbox.org/api/compile.json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language: selectedLanguage, code }),
+        body: JSON.stringify({ compiler: langConfig.wandboxId, code }),
       });
 
+      if (!res.ok) {
+        throw new Error(`Wandbox API error: ${res.status}`);
+      }
+
       const data = await res.json();
+      const executionTime = Date.now() - startTime;
+
+      let finalOutput = "";
+      let isError = false;
+
+      if (data.status !== "0" && (data.compiler_error || data.program_error)) {
+        finalOutput = data.compiler_error ? data.compiler_error : data.program_error;
+        isError = true;
+      } else {
+        finalOutput = data.program_output || "(No output)";
+      }
 
       set({
-        output: data.output || "(No output)",
-        executionTime: data.executionTime || null,
-        hasError: data.error || false,
-        timedOut: data.timedOut || false,
+        output: finalOutput,
+        executionTime,
+        hasError: isError,
+        timedOut: false,
         isRunning: false,
       });
     } catch (err) {
