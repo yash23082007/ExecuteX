@@ -117,25 +117,9 @@ func main() {
     println!("Hello, ExecuteX!");
 }`,
   },
-  kotlin: {
-    wandboxId: "openjdk-jdk-22+36",
-    ext: ".kt",
-    displayName: "Kotlin",
-    category: "Mobile / JVM",
-    boilerplate: `fun main() {
-    println("Hello, ExecuteX!")
-}`,
-  },
-  swift: {
-    wandboxId: "swift-6.0.1",
-    ext: ".swift",
-    displayName: "Swift",
-    category: "Mobile / Apple",
-    boilerplate: `// Swift — iOS & macOS development
-print("Hello, ExecuteX!")`,
-  },
+
   scala: {
-    wandboxId: "scala-3.5.1",
+    wandboxId: "scala-3.3.4",
     ext: ".scala",
     displayName: "Scala",
     category: "Data / JVM",
