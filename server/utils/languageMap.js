@@ -33,7 +33,7 @@ int main() {
     ext: ".java",
     displayName: "Java",
     category: "Enterprise Backend",
-    boilerplate: `public class Main {
+    boilerplate: `class Main {
     public static void main(String[] args) {
         System.out.println("Hello, ExecuteX!");
     }
