@@ -4,7 +4,6 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const compileRoutes = require("../server/routes/compileRoutes");
 const shareRoutes = require("../server/routes/shareRoutes");
 
 const app = express();
@@ -40,7 +39,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use("/api/v1", compileRoutes);
 app.use("/api/v1", shareRoutes);
 
 // Health check

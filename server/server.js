@@ -6,10 +6,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const path = require("path");
-const fs = require("fs");
 
-const compileRoutes = require("./routes/compileRoutes");
 const shareRoutes = require("./routes/shareRoutes");
 
 const app = express();
@@ -27,14 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── Ensure temp_jobs directory ──────────────────────────
-const tempDir = path.join(__dirname, "temp_jobs");
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
-}
-
 // ─── API Routes ──────────────────────────────────────────
-app.use("/api/v1", compileRoutes);
 app.use("/api/v1", shareRoutes);
 
 // Health check

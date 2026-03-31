@@ -2,6 +2,4 @@ node_modules/
 dist/
 .env
 *.log
-server/temp_jobs/*
-!server/temp_jobs/.gitkeep
 .DS_Store
