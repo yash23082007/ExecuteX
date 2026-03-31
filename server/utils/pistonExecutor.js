@@ -1,88 +1,68 @@
 // server/utils/pistonExecutor.js
-// Migration: Replaces Piston with Judge0 due to Piston API blocking Vercel.
+// Migration: Reverts to Piston Public API (No Key Required).
 
-const JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com/submissions";
-
-// Judge0 language IDs
-const JUDGE0_LANG_MAP = {
-  python: 71,
-  javascript: 93,
-  c: 50,
-  cpp: 54,
-  java: 62,
-  csharp: 51,
-  ruby: 72,
-  php: 68,
-  go: 60,
-  rust: 73,
-  typescript: 74,
-  bash: 46,
-  swift: 83,
-  kotlin: 78,
-  scala: 81,
-  lua: 64,
-  perl: 85,
-  r: 80,
-  haskell: 61,
-  julia: 104
-};
+const PISTON_API_URL = process.env.PISTON_API_URL || "https://emkc.org/api/v2/piston/execute";
 
 /**
- * Executes code using the Judge0 API (serverless compatible).
- * @param {string} language - language identifier
- * @param {string} version - Language version
+ * Executes code using the Piston Public API (Zero Key Required).
+ * @param {string} language - language identifier (pistonId)
+ * @param {string} version - Language version (pistonVersion)
  * @param {string} code - Source code to execute
  */
 async function executeInPiston(language, version, code) {
   const startTime = Date.now();
-  const langId = JUDGE0_LANG_MAP[language] || 71; // Default to python if not found
 
   try {
-    const headers = {
-      "Content-Type": "application/json",
-      "X-RapidAPI-Key": process.env.JUDGE0_API_KEY || "", 
-      "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com"
-    };
-
-    // 1. Submit code to Judge0
-    const submissionRes = await fetch(`${JUDGE0_API_URL}?base64_encoded=false&wait=true`, {
+    const response = await fetch(PISTON_API_URL, {
       method: "POST",
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        language_id: langId,
-        source_code: code,
+        language: language,
+        version: version,
+        files: [
+          {
+            content: code,
+          },
+        ],
       }),
     });
 
-    if (!submissionRes.ok) {
-      if (submissionRes.status === 401 || submissionRes.status === 403) {
-          throw new Error("Invalid or missing Judge0 API Key in Vercel Environment Variables. Please set JUDGE0_API_KEY.");
-      }
-      throw new Error(`Judge0 API error: ${submissionRes.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Piston API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await submissionRes.json();
+    const data = await response.json();
     const executionTime = Date.now() - startTime;
 
-    // Combine output vs errors
-    let output = data.stdout || "";
-    if (data.compile_output) output += "\n" + data.compile_output;
-    if (data.stderr) output += "\n" + data.stderr;
-    if (data.message) output += "\n" + data.message; // Usually a timeout or runtime error message
+    // Piston structure: data.run { stdout, stderr, code, signal, output }
+    // Some languages also have data.compile { stdout, stderr, code, signal, output }
+    const run = data.run || {};
+    const compile = data.compile || {};
 
-    // Judge0 status ID 3 means "Accepted/Success". Anything else is an error.
-    const isError = data.status && data.status.id !== 3;
+    // Combine output: prioritizes compile error if present
+    let finalOutput = "";
+    let isError = false;
+
+    if (compile.code !== undefined && compile.code !== 0) {
+      finalOutput = compile.output || compile.stderr || "Compilation Error";
+      isError = true;
+    } else {
+      finalOutput = run.output || "(No output)";
+      isError = run.code !== 0 || (run.stderr && run.stderr.length > 0);
+    }
 
     return {
-      output: output.trim() || "(No output)",
+      output: finalOutput,
       executionTime,
       error: isError,
-      timedOut: data.status && data.status.id === 5, // Status 5 is Time Limit Exceeded
+      timedOut: run.signal === "SIGTERM" || compile.signal === "SIGTERM",
     };
   } catch (err) {
-    console.error("[Judge0] Execution failed:", err);
+    console.error("[Piston] Execution failed:", err);
     return {
-      output: `❌ API Error: ${err.message}`,
+      output: `❌ Execution Error: ${err.message}`,
       executionTime: Date.now() - startTime,
       error: true,
       timedOut: false,

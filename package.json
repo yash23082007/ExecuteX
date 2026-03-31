@@ -9,7 +9,8 @@
     "dev:server": "cd server && npm run dev",
     "docker-dev": "docker-compose up --build",
     "docker-prod": "docker-compose -f docker-compose.yml up -d --build",
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "build:client": "cd client && npm run build"
   },
   "dependencies": {
     "cors": "^2.8.5",
