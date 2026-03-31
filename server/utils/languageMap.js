@@ -78,8 +78,7 @@ const greeting: string = "Hello, ExecuteX!";
 console.log(greeting);`,
   },
   php: {
-    pistonId: "php",
-    pistonVersion: "8.2.3",
+    wandboxId: "php-8.3.12",
     ext: ".php",
     displayName: "PHP",
     category: "Web / Scripting",
@@ -89,8 +88,7 @@ echo "Hello, ExecuteX!\\n";
 ?>`,
   },
   ruby: {
-    pistonId: "ruby",
-    pistonVersion: "3.0.1",
+    wandboxId: "ruby-3.4.1",
     ext: ".rb",
     displayName: "Ruby",
     category: "Web / Scripting",
@@ -98,8 +96,7 @@ echo "Hello, ExecuteX!\\n";
 puts "Hello, ExecuteX!"`,
   },
   go: {
-    pistonId: "go",
-    pistonVersion: "1.16.2",
+    wandboxId: "go-1.23.2",
     ext: ".go",
     displayName: "Go",
     category: "Modern Systems",
@@ -112,8 +109,7 @@ func main() {
 }`,
   },
   rust: {
-    pistonId: "rust",
-    pistonVersion: "1.68.2",
+    wandboxId: "rust-1.82.0",
     ext: ".rs",
     displayName: "Rust",
     category: "Modern Systems",
@@ -122,8 +118,7 @@ func main() {
 }`,
   },
   kotlin: {
-    pistonId: "kotlin",
-    pistonVersion: "1.8.20",
+    wandboxId: "openjdk-jdk-22+36",
     ext: ".kt",
     displayName: "Kotlin",
     category: "Mobile / JVM",
@@ -132,8 +127,7 @@ func main() {
 }`,
   },
   swift: {
-    pistonId: "swift",
-    pistonVersion: "5.3.3",
+    wandboxId: "swift-6.0.1",
     ext: ".swift",
     displayName: "Swift",
     category: "Mobile / Apple",
@@ -141,8 +135,7 @@ func main() {
 print("Hello, ExecuteX!")`,
   },
   scala: {
-    pistonId: "scala",
-    pistonVersion: "3.2.2",
+    wandboxId: "scala-3.5.1",
     ext: ".scala",
     displayName: "Scala",
     category: "Data / JVM",
@@ -153,8 +146,7 @@ print("Hello, ExecuteX!")`,
 }`,
   },
   haskell: {
-    pistonId: "haskell",
-    pistonVersion: "9.0.1",
+    wandboxId: "ghc-9.10.1",
     ext: ".hs",
     displayName: "Haskell",
     category: "Pure Functional",
@@ -163,8 +155,7 @@ main :: IO ()
 main = putStrLn "Hello, ExecuteX!"`,
   },
   lua: {
-    pistonId: "lua",
-    pistonVersion: "5.4.4",
+    wandboxId: "lua-5.4.7",
     ext: ".lua",
     displayName: "Lua",
     category: "Embedded / Gaming",
@@ -172,8 +163,7 @@ main = putStrLn "Hello, ExecuteX!"`,
 print("Hello, ExecuteX!")`,
   },
   bash: {
-    pistonId: "bash",
-    pistonVersion: "5.2.0",
+    wandboxId: "bash",
     ext: ".sh",
     displayName: "Bash",
     category: "Shell Scripting",
@@ -182,8 +172,7 @@ print("Hello, ExecuteX!")`,
 echo "Hello, ExecuteX!"`,
   },
   perl: {
-    pistonId: "perl",
-    pistonVersion: "5.36.0",
+    wandboxId: "perl-5.42.0",
     ext: ".pl",
     displayName: "Perl",
     category: "Legacy Scripting",
@@ -193,7 +182,22 @@ use strict;
 use warnings;
 print "Hello, ExecuteX!\\n";`,
   },
+  r: {
+    wandboxId: "r-4.4.1",
+    ext: ".r",
+    displayName: "R",
+    category: "Data Science",
+    boilerplate: `# R — Statistical Computing
+cat("Hello, ExecuteX!\\n")`
+  },
+  julia: {
+    wandboxId: "julia-1.10.5",
+    ext: ".jl",
+    displayName: "Julia",
+    category: "Data / JVM",
+    boilerplate: `# Julia — High-performance numerical computing
+println("Hello, ExecuteX!")`
+  },
 };
-
 module.exports = languageMap;
 
