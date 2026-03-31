@@ -4,7 +4,7 @@
 
 const languageMap = {
   c: {
-    codeXId: "c",
+    wandboxId: "gcc-head-c",
     ext: ".c",
     displayName: "C",
     category: "Core CS / Systems",
@@ -16,7 +16,7 @@ int main() {
 }`,
   },
   cpp: {
-    codeXId: "cpp",
+    wandboxId: "gcc-head",
     ext: ".cpp",
     displayName: "C++",
     category: "Core CS / Systems",
@@ -29,7 +29,7 @@ int main() {
 }`,
   },
   java: {
-    codeXId: "java",
+    wandboxId: "openjdk-jdk-22+36",
     ext: ".java",
     displayName: "Java",
     category: "Enterprise Backend",
@@ -40,7 +40,7 @@ int main() {
 }`,
   },
   csharp: {
-    codeXId: "cs",
+    wandboxId: "mono-6.12.0.199",
     ext: ".cs",
     displayName: "C#",
     category: "Enterprise Backend",
@@ -53,7 +53,7 @@ class Program {
 }`,
   },
   python: {
-    codeXId: "py",
+    wandboxId: "cpython-3.14.0",
     ext: ".py",
     displayName: "Python",
     category: "AI / Data Science",
@@ -61,7 +61,7 @@ class Program {
 print("Hello, ExecuteX!")`,
   },
   javascript: {
-    codeXId: "js",
+    wandboxId: "nodejs-20.17.0",
     ext: ".js",
     displayName: "JavaScript",
     category: "Web / Async",
@@ -69,7 +69,7 @@ print("Hello, ExecuteX!")`,
 console.log("Hello, ExecuteX!");`,
   },
   typescript: {
-    codeXId: "ts",
+    wandboxId: "typescript-5.6.2",
     ext: ".ts",
     displayName: "TypeScript",
     category: "Web / Typed",

@@ -1,8 +1,8 @@
 // server/controllers/runnerController.js
-// Content Migration: Replaces local Docker execution with CodeX API for serverless compatibility.
+// Content Migration: Replaces local Docker execution with Wandbox API for serverless compatibility.
 
 const languageMap = require("../utils/languageMap");
-const { executeInCodeX } = require("../utils/codeXExecutor");
+const { executeInWandbox } = require("../utils/wandboxExecutor");
 
 /**
  * POST /api/v1/compile
@@ -28,11 +28,11 @@ async function compileAndRun(req, res) {
   }
 
   try {
-    console.log(`[Runner] Executing ${language} code via CodeX...`);
+    console.log(`[Runner] Executing ${language} code via Wandbox...`);
 
-    // 2. Execute via CodeX API (Serverless compatible)
-    const result = await executeInCodeX(
-      langConfig.codeXId,
+    // 2. Execute via Wandbox API (Serverless compatible)
+    const result = await executeInWandbox(
+      langConfig.wandboxId,
       code
     );
 
