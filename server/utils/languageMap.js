@@ -4,8 +4,7 @@
 
 const languageMap = {
   c: {
-    pistonId: "c",
-    pistonVersion: "10.2.0",
+    codeXId: "c",
     ext: ".c",
     displayName: "C",
     category: "Core CS / Systems",
@@ -17,8 +16,7 @@ int main() {
 }`,
   },
   cpp: {
-    pistonId: "cpp",
-    pistonVersion: "10.2.0",
+    codeXId: "cpp",
     ext: ".cpp",
     displayName: "C++",
     category: "Core CS / Systems",
@@ -31,8 +29,7 @@ int main() {
 }`,
   },
   java: {
-    pistonId: "java",
-    pistonVersion: "15.0.2", // Piston version
+    codeXId: "java",
     ext: ".java",
     displayName: "Java",
     category: "Enterprise Backend",
@@ -43,8 +40,7 @@ int main() {
 }`,
   },
   csharp: {
-    pistonId: "csharp",
-    pistonVersion: "6.12.0",
+    codeXId: "cs",
     ext: ".cs",
     displayName: "C#",
     category: "Enterprise Backend",
@@ -57,35 +53,15 @@ class Program {
 }`,
   },
   python: {
-    pistonId: "python",
-    pistonVersion: "3.10.0",
+    codeXId: "py",
     ext: ".py",
     displayName: "Python",
     category: "AI / Data Science",
     boilerplate: `# Python — The gold standard for AI & automation
 print("Hello, ExecuteX!")`,
   },
-  r: {
-    pistonId: "rscript",
-    pistonVersion: "4.1.1",
-    ext: ".r",
-    displayName: "R",
-    category: "Data Science",
-    boilerplate: `# R — Statistical Computing
-cat("Hello, ExecuteX!\\n")`,
-  },
-  julia: {
-    pistonId: "julia",
-    pistonVersion: "1.8.5",
-    ext: ".jl",
-    displayName: "Julia",
-    category: "Data Science",
-    boilerplate: `# Julia — High-performance numerical computing
-println("Hello, ExecuteX!")`,
-  },
   javascript: {
-    pistonId: "javascript",
-    pistonVersion: "18.15.0",
+    codeXId: "js",
     ext: ".js",
     displayName: "JavaScript",
     category: "Web / Async",
@@ -93,8 +69,7 @@ println("Hello, ExecuteX!")`,
 console.log("Hello, ExecuteX!");`,
   },
   typescript: {
-    pistonId: "typescript",
-    pistonVersion: "5.0.3", // TypeScript via Node-TS
+    codeXId: "ts",
     ext: ".ts",
     displayName: "TypeScript",
     category: "Web / Typed",

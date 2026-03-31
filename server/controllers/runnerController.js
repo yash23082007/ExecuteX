@@ -1,8 +1,8 @@
 // server/controllers/runnerController.js
-// Content Migration: Replaces local Docker execution with Piston API for serverless compatibility.
+// Content Migration: Replaces local Docker execution with CodeX API for serverless compatibility.
 
 const languageMap = require("../utils/languageMap");
-const { executeInPiston } = require("../utils/pistonExecutor");
+const { executeInCodeX } = require("../utils/codeXExecutor");
 
 /**
  * POST /api/v1/compile
@@ -28,12 +28,11 @@ async function compileAndRun(req, res) {
   }
 
   try {
-    console.log(`[Runner] Executing ${language} code via Piston...`);
+    console.log(`[Runner] Executing ${language} code via CodeX...`);
 
-    // 2. Execute via Piston API (Serverless compatible)
-    const result = await executeInPiston(
-      langConfig.pistonId,
-      langConfig.pistonVersion,
+    // 2. Execute via CodeX API (Serverless compatible)
+    const result = await executeInCodeX(
+      langConfig.codeXId,
       code
     );
 
