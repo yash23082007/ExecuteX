@@ -7,5 +7,5 @@ test('user can select a language and load generic boilerplate', async ({ page })
   await expect(page.locator('.app-shell')).toBeVisible();
 
   // Test top navigation branding is visible
-  await expect(page.getByText('ExecuteX')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'ExecuteX' })).toBeVisible();
 });
