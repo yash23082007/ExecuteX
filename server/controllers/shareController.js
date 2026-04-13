@@ -19,7 +19,7 @@ try {
   } else {
     console.warn("Upstash Redis not configured, rate limiting disabled.");
   }
-} catch (err) {
+} catch {
   console.warn("Upstash Redis not configured, rate limiting disabled.");
 }
 
