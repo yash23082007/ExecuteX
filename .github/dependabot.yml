@@ -6,9 +6,28 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
 
   - package-ecosystem: "npm"
     directory: "/server"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10

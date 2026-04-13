@@ -106,7 +106,7 @@ router.post("/execute", async (req, res) => {
         providerSuccess = true;
       } catch (tier2Err) {
         console.error(`[Circuit Breaker] Piston failed: ${tier2Err.message}`);
-        throw new Error("All execution providers unavailable.");
+        throw new Error("All execution providers unavailable.", { cause: tier2Err });
       }
     }
 
@@ -119,6 +119,7 @@ router.post("/execute", async (req, res) => {
   } catch (error) {
     console.error("[Execution Controller] Failed:", error.message);
     return res.status(503).json({ error: error.message || "Execution failed due to server error." });
+  }
 });
 
 module.exports = router;
