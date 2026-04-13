@@ -23,6 +23,25 @@ ExecuteX is a high-performance, serverless code execution environment designed f
 
 ExecuteX uses a **Zero-Host Serverless** architecture designed to scale infinitely on Vercel without maintaining execution nodes.
 
+```mermaid
+sequenceDiagram
+  participant U as User (Browser)
+  participant V as Vercel Edge
+  participant W as Wandbox API
+  participant M as MongoDB
+
+  U->>V: POST /api/v1/execute
+  V->>V: Validate + Rate Limit
+  V->>W: Forward to Wandbox
+  W-->>V: Execution Result
+  V-->>U: Return Result
+
+  U->>V: POST /api/v1/snippets
+  V->>M: Store Snippet
+  M-->>V: Snippet ID
+  V-->>U: Share URL
+```
+
 ### Tech Stack
 *   **Frontend**: React 18, Vite, Zustand, Monaco Editor.    
 *   **Compiler Engine**: Wandbox API (Directly from Browser)

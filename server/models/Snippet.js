@@ -20,7 +20,7 @@ const snippetSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 604800, // TTL: 7 days (auto-delete)
+    expires: 7776000, // TTL: 90 days (auto-delete)
   },
 });
 

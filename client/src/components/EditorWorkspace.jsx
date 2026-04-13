@@ -1,8 +1,9 @@
 // src/components/EditorWorkspace.jsx
 // Premium editor with panel header, breadcrumb-style tab, refined themes
 
-import { useRef, useCallback } from "react";
-import Editor from "@monaco-editor/react";
+import React, { useRef, useCallback, Suspense } from "react";
+// Lazy load Monaco editor to reduce initial bundle size
+const Editor = React.lazy(() => import("@monaco-editor/react"));
 import { FileCode2 } from "lucide-react";
 import useCompilerStore from "../store/useCompilerStore";
 import "./EditorWorkspace.css";
@@ -14,8 +15,9 @@ const EXT = {
 };
 
 export default function EditorWorkspace() {
-  const { code, setCode, selectedLanguage, monacoLangMap, theme, fontSize, runCode } =
+  const { code, setCode, selectedLanguage, monacoLangMap, theme, fontSize } =
     useCompilerStore();
+  const runCode = useCompilerStore((state) => state.runCode);
   const editorRef = useRef(null);
 
   const handleMount = useCallback((editor, monaco) => {
@@ -134,50 +136,59 @@ export default function EditorWorkspace() {
         </div>
       </div>
       <div className="edpanel__body">
-        <Editor
-          height="100%"
-          language={monacoLangMap[selectedLanguage] || "plaintext"}
-          theme={theme === "dark" ? "ex-dark" : "ex-light"}
-          value={code}
-          onChange={(val) => setCode(val || "")}
-          onMount={handleMount}
-          options={{
-            fontSize,
-            fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
-            fontLigatures: true,
-            lineHeight: 1.75,
-            letterSpacing: 0.3,
-            padding: { top: 16, bottom: 16 },
-            minimap: { enabled: false },
-            scrollBeyondLastLine: false,
-            smoothScrolling: true,
-            cursorBlinking: "smooth",
-            cursorSmoothCaretAnimation: "on",
-            cursorWidth: 2,
-            renderLineHighlight: "all",
-            roundedSelection: true,
-            automaticLayout: true,
-            wordWrap: "on",
-            tabSize: 4,
-            bracketPairColorization: { enabled: true },
-            guides: { bracketPairs: true, indentation: true },
-            suggest: { showWords: false },
-            overviewRulerBorder: false,
-            hideCursorInOverviewRuler: true,
-            overviewRulerLanes: 0,
-            scrollbar: { verticalScrollbarSize: 5, horizontalScrollbarSize: 5, useShadows: false },
-            renderWhitespace: "none",
-            lineNumbersMinChars: 4,
-            folding: true,
-            foldingHighlight: false,
-          }}
-          loading={
-            <div className="edpanel__loading">
-              <div className="edpanel__loading-bar" />
-              <span>Initializing editor...</span>
-            </div>
-          }
-        />
+        <Suspense fallback={
+          <div className="edpanel__loading">
+            <div className="edpanel__loading-bar" />
+            <span>Loading editor module...</span>
+          </div>
+        }>
+          <Editor
+            height="100%"
+            language={monacoLangMap[selectedLanguage] || "plaintext"}
+            theme={theme === "dark" ? "ex-dark" : "ex-light"}
+            value={code}
+            onChange={(val) => setCode(val || "")}
+            onMount={handleMount}
+            options={{
+              fontSize,
+              fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
+              fontLigatures: true,
+              lineHeight: 1.75,
+              letterSpacing: 0.3,
+              padding: { top: 16, bottom: 16 },
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              smoothScrolling: true,
+              cursorBlinking: "smooth",
+              cursorSmoothCaretAnimation: "on",
+              cursorWidth: 2,
+              renderLineHighlight: "all",
+              roundedSelection: true,
+              automaticLayout: true,
+              wordWrap: "on",
+              tabSize: 4,
+              bracketPairColorization: { enabled: true },
+              guides: { bracketPairs: true, indentation: true },
+              suggest: { showWords: false },
+              overviewRulerBorder: false,
+              hideCursorInOverviewRuler: true,
+              overviewRulerLanes: 0,
+              scrollbar: { verticalScrollbarSize: 5, horizontalScrollbarSize: 5, useShadows: false },
+              renderWhitespace: "none",
+              lineNumbersMinChars: 4,
+              folding: true,
+              foldingHighlight: false,
+              accessibilitySupport: 'on',
+              ariaLabel: `Code editor for ${selectedLanguage}`,
+            }}
+            loading={
+              <div className="edpanel__loading">
+                <div className="edpanel__loading-bar" />
+                <span>Initializing editor...</span>
+              </div>
+            }
+          />
+        </Suspense>
       </div>
     </div>
   );

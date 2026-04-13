@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import {
-  Play, ChevronDown, Sun, Moon, Search, X, Minus, Plus, Check, Info, Link, Copy,
+  Play, ChevronDown, Sun, Moon, Search, X, Minus, Plus, Check, Info, Link, Copy, Edit2,
 } from "lucide-react";
 import useCompilerStore from "../store/useCompilerStore";
 import "./TopNavigation.css";
@@ -20,11 +20,13 @@ export default function TopNavigation() {
   const {
     selectedLanguage, languages, isRunning, theme, fontSize,
     runCode, setLanguage, toggleTheme, setFontSize, toggleAbout,
-    isSharing, shareUrl, shareError, shareCode, clearShareState
+    isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet
   } = useCompilerStore();
 
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const isSharedView = !!new URLSearchParams(window.location.search).get("s");
 
   const handleCopyLink = () => {
     if (shareUrl) {
@@ -91,8 +93,8 @@ export default function TopNavigation() {
             <div className="lang__dd">
               <div className="dd__head">
                 <Search size={12} className="dd__search-ico" />
-                <input ref={searchRef} className="dd__search" placeholder="Search languages..." value={q} onChange={(e) => setQ(e.target.value)} />
-                {q && <button className="dd__clear" onClick={() => setQ("")}><X size={10} /></button>}
+                <input ref={searchRef} className="dd__search" placeholder="Search languages..." value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search languages" />
+                {q && <button className="dd__clear" onClick={() => setQ("")} aria-label="Clear search"><X size={10} /></button>}
               </div>
               <div className="dd__body">
                 {Object.entries(grouped).map(([cat, langs]) => (
@@ -116,13 +118,19 @@ export default function TopNavigation() {
 
       {/* ── Center ── */}
       <div className="nav__center">
-        <button className={`run share-btn ${isSharing ? "run--active" : ""}`} onClick={shareCode} disabled={isSharing || isRunning}>
-          {isSharing ? (
-            <><div className="run__spin" /><span>Sharing...</span></>
-          ) : (
-            <><Link size={12} fill="currentColor" strokeWidth={0} /><span>Share</span></>
-          )}
-        </button>
+        {isSharedView ? (
+          <button className="run share-btn" onClick={forkSnippet}>
+            <Edit2 size={12} fill="currentColor" strokeWidth={0} /><span>Fork Snippet</span>
+          </button>
+        ) : (
+          <button className={`run share-btn ${isSharing ? "run--active" : ""}`} onClick={shareCode} disabled={isSharing || isRunning}>
+            {isSharing ? (
+              <><div className="run__spin" /><span>Sharing...</span></>
+            ) : (
+              <><Link size={12} fill="currentColor" strokeWidth={0} /><span>Share</span></>
+            )}
+          </button>
+        )}
 
         {shareUrl && (
           <div className="share-toast">

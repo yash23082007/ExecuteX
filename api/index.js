@@ -4,13 +4,29 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Sentry = require("@sentry/node");
+const pino = require("pino");
+
+const logger = pino({ level: "info" });
+
+// Initialize Sentry early
+Sentry.init({
+  dsn: process.env.SENTRY_DSN || "",
+  tracesSampleRate: 0.1,
+});
+
 const shareRoutes = require("../server/routes/shareRoutes");
+const executeRoutes = require("../server/routes/executeRoutes");
 
 const app = express();
 const MONGO_URI = process.env.MONGO_URI || "";
 
 // Middleware
-app.use(cors({ origin: "*" }));
+app.use(cors({ 
+  origin: process.env.ALLOWED_ORIGIN || "http://localhost:5173",
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,16 +35,20 @@ let cachedDb = null;
 async function connectToDatabase() {
   if (cachedDb) return cachedDb;
   if (!MONGO_URI) {
-    console.log("[MongoDB] No MONGO_URI set. Share feature disabled.");
+    logger.warn("[MongoDB] No MONGO_URI set. Share feature disabled.");
     return null;
   }
   try {
-    const db = await mongoose.connect(MONGO_URI);
+    const db = await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+      maxPoolSize: 10,
+    });
     cachedDb = db;
-    console.log("[MongoDB] Connected successfully.");
+    logger.info("[MongoDB] Connected successfully.");
     return db;
   } catch (err) {
-    console.error("[MongoDB] Connection failed:", err.message);
+    logger.error({ err }, "[MongoDB] Connection failed");
     return null;
   }
 }
@@ -40,6 +60,10 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/api/v1", shareRoutes);
+app.use("/api/v1", executeRoutes);
+
+// Sentry error handler
+Sentry.setupExpressErrorHandler(app);
 
 // Health check
 app.get("/api/v1/health", (req, res) => {

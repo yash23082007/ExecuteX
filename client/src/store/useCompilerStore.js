@@ -2,6 +2,7 @@
 // Zustand global state for the ExecuteX compiler
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 const API_BASE = "/api/v1";
 
@@ -55,14 +56,17 @@ const getInitialTheme = () => {
   return "dark";
 };
 
-const useCompilerStore = create((set, get) => ({
-  // ── Language State ──
-  languages: LANGUAGES,
-  selectedLanguage: "python",
-  monacoLangMap: MONACO_LANG_MAP,
+const useCompilerStore = create(
+  persist(
+    (set, get) => ({
+      // ── Language State ──
+      languages: LANGUAGES,
+      selectedLanguage: "python",
+      monacoLangMap: MONACO_LANG_MAP,
 
-  // ── Editor State ──
-  code: LANGUAGES.find((l) => l.key === "python")?.boilerplate || "",
+      // ── Editor State ──
+      code: LANGUAGES.find((l) => l.key === "python")?.boilerplate || "",
+      stdin: "",
   fontSize: 15,
 
   // ── Output State ──
@@ -71,6 +75,7 @@ const useCompilerStore = create((set, get) => ({
   executionTime: null,
   hasError: false,
   timedOut: false,
+  executionHistory: [],
 
   // ── UI State ──
   theme: getInitialTheme(),
@@ -81,6 +86,16 @@ const useCompilerStore = create((set, get) => ({
   shareError: null,
 
   // ── Actions ──
+  setCode: (code) => set({ code, isForked: false }),
+  setStdin: (stdin) => set({ stdin }),
+  
+  forkSnippet: () => {
+    // Treat the current code as a new snippet
+    set({ shareUrl: null, shareError: null, isForked: true });
+    // Remove ?s= from URL to signify it's disconnected from the read-only view
+    window.history.replaceState({}, document.title, "/");
+  },
+
   setLanguage: (langKey) => {
     const lang = LANGUAGES.find((l) => l.key === langKey);
     if (lang) {
@@ -96,7 +111,6 @@ const useCompilerStore = create((set, get) => ({
     }
   },
 
-  setCode: (code) => set({ code }),
 
   setFontSize: (size) => set({ fontSize: Math.min(28, Math.max(10, size)) }),
 
@@ -136,14 +150,20 @@ const useCompilerStore = create((set, get) => ({
       const langConfig = get().languages.find(l => l.key === selectedLanguage);
       const startTime = Date.now();
       
-      const res = await fetch("https://wandbox.org/api/compile.json", {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+
+      const res = await fetch("/api/v1/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ compiler: langConfig.wandboxId, code }),
+        body: JSON.stringify({ compiler: langConfig.wandboxId, code: get().code, stdin: get().stdin }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!res.ok) {
-        throw new Error(`Wandbox API error: ${res.status}`);
+        throw new Error(`API error: ${res.status}`);
       }
 
       const data = await res.json();
@@ -159,19 +179,36 @@ const useCompilerStore = create((set, get) => ({
         finalOutput = data.program_output || "(No output)";
       }
 
-      set({
+      set((state) => ({
         output: finalOutput,
         executionTime,
         hasError: isError,
         timedOut: false,
         isRunning: false,
-      });
+        executionHistory: [{
+          lang: selectedLanguage,
+          code: code,
+          output: finalOutput,
+          time: executionTime,
+          timestamp: Date.now()
+        }, ...state.executionHistory].slice(0, 10)
+      }));
     } catch (err) {
-      set({
-        output: `❌ Connection failed: ${err.message}\n\nPlease check your internet connection or try again later.`,
-        hasError: true,
-        isRunning: false,
-      });
+      if (err.name === 'AbortError') {
+        set({
+          output: `⏱ Execution timed out after 15 seconds. Try simplifying your code or avoiding infinite loops.`,
+          hasError: true,
+          timedOut: true,
+          isRunning: false,
+          executionTime: null,
+        });
+      } else {
+        set({
+          output: `❌ Connection failed: ${err.message}\n\nPlease check your internet connection or try again later.`,
+          hasError: true,
+          isRunning: false,
+        });
+      }
     }
   },
   // ── Share Features ──
@@ -196,7 +233,7 @@ const useCompilerStore = create((set, get) => ({
       } else {
         set({ shareError: data.error, isSharing: false });
       }
-    } catch (err) {
+    } catch  {
       set({ shareError: "Failed to connect to the server.", isSharing: false });
     }
   },
@@ -218,13 +255,19 @@ const useCompilerStore = create((set, get) => ({
       } else {
         set({ output: data.error || "Failed to load snippet.", hasError: true, isRunning: false });
       }
-    } catch (err) {
+    } catch  {
       set({ output: "Failed to connect to the server.", hasError: true, isRunning: false });
     }
   },
 
   clearShareState: () => set({ shareUrl: null, shareError: null }),
-}));
+    }),
+    {
+      name: "executex-editor-storage",
+      partialize: (state) => ({ code: state.code, selectedLanguage: state.selectedLanguage, theme: state.theme }),
+    }
+  )
+);
 
 // Apply theme on load
 document.documentElement.setAttribute("data-theme", getInitialTheme());

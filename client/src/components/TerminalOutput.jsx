@@ -13,10 +13,11 @@ const EXT = {
 };
 
 export default function TerminalOutput() {
-  const { output, isRunning, hasError, timedOut, executionTime, clearOutput, selectedLanguage, languages } =
+  const { output, isRunning, hasError, timedOut, executionTime, clearOutput, selectedLanguage, languages, stdin, setStdin } =
     useCompilerStore();
   const bodyRef = useRef(null);
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState("output");
   const lang = languages.find((l) => l.key === selectedLanguage);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function TerminalOutput() {
 
   const doCopy = async () => {
     if (!output) return;
-    try { await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch {}
+    try { await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignore */ }
   };
 
   const ext = EXT[selectedLanguage] || "";
@@ -38,27 +39,55 @@ export default function TerminalOutput() {
           <div className="termpanel__ico">
             <Terminal size={11} />
           </div>
-          <span className="termpanel__name">Terminal</span>
-          {executionTime !== null && (
-            <div className={`termpanel__pill ${hasError ? "termpanel__pill--err" : "termpanel__pill--ok"}`}>
+          <div className="termpanel__tabs" style={{ display: 'flex', gap: '10px', marginLeft: '10px' }}>
+            <span 
+              className={`termpanel__name ${activeTab === 'output' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('output')}
+              style={{ cursor: 'pointer', opacity: activeTab === 'output' ? 1 : 0.6 }}
+            >
+              Output
+            </span>
+            <span 
+              className={`termpanel__name ${activeTab === 'input' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('input')}
+              style={{ cursor: 'pointer', opacity: activeTab === 'input' ? 1 : 0.6 }}
+            >
+              STDIN
+            </span>
+          </div>
+          {executionTime !== null && activeTab === 'output' && (
+            <div className={`termpanel__pill ${hasError ? "termpanel__pill--err" : "termpanel__pill--ok"}`} style={{ marginLeft: '10px' }}>
               <Clock size={9} />
               <span>{executionTime}ms</span>
             </div>
           )}
         </div>
         <div className="termpanel__btns">
-          <button className="termpanel__btn" onClick={doCopy} disabled={!output} title="Copy">
-            {copied ? <Check size={11} className="termpanel__btn--check" /> : <Copy size={11} />}
-          </button>
-          <button className="termpanel__btn" onClick={clearOutput} disabled={!output} title="Clear">
-            <Trash2 size={11} />
-          </button>
+          {activeTab === 'output' && (
+            <>
+              <button className="termpanel__btn" onClick={doCopy} disabled={!output} title="Copy" aria-label="Copy output">
+                {copied ? <Check size={11} className="termpanel__btn--check" /> : <Copy size={11} />}
+              </button>
+              <button className="termpanel__btn" onClick={clearOutput} disabled={!output} title="Clear" aria-label="Clear output">
+                <Trash2 size={11} />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       {/* Body */}
-      <div className={`termpanel__body ${hasError ? "termpanel__body--err" : ""}`} ref={bodyRef}>
-        {isRunning ? (
+      <div className={`termpanel__body ${hasError && activeTab === 'output' ? "termpanel__body--err" : ""}`} ref={bodyRef}>
+        {activeTab === 'input' ? (
+          <textarea
+            className="term__stdin"
+            value={stdin || ""}
+            onChange={(e) => setStdin(e.target.value)}
+            placeholder="Type standard input (STDIN) here..."
+            style={{ width: '100%', height: '100%', background: 'transparent', color: '#fff', border: 'none', resize: 'none', padding: '10px', fontFamily: 'inherit', outline: 'none' }}
+            spellCheck="false"
+          />
+        ) : isRunning ? (
           <div className="term__running">
             <div className="term__dots">
               <i className="term__dot" /><i className="term__dot" /><i className="term__dot" />
