@@ -41,6 +41,7 @@ const useCompilerStore = create(
   isSharing: false,
   shareUrl: null,
   shareError: null,
+  isForked: false,
 
   // ── Actions ──
   setCode: (code) => set({ code }),
