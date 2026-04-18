@@ -6,13 +6,8 @@ import React, { useRef, useCallback, Suspense } from "react";
 const Editor = React.lazy(() => import("@monaco-editor/react"));
 import { FileCode2 } from "lucide-react";
 import useCompilerStore from "../store/useCompilerStore";
+import { FILE_EXT } from "../constants/languages";
 import "./EditorWorkspace.css";
-
-const EXT = {
-  c:".c",cpp:".cpp",java:".java",csharp:".cs",python:".py",r:".r",julia:".jl",
-  javascript:".js",typescript:".ts",php:".php",ruby:".rb",go:".go",rust:".rs",
-  kotlin:".kt",swift:".swift",scala:".scala",haskell:".hs",lua:".lua",bash:".sh",perl:".pl",
-};
 
 export default function EditorWorkspace() {
   const { code, setCode, selectedLanguage, monacoLangMap, theme, fontSize } =
@@ -116,7 +111,7 @@ export default function EditorWorkspace() {
     editor.focus();
   }, [runCode]);
 
-  const ext = EXT[selectedLanguage] || ".py";
+  const ext = FILE_EXT[selectedLanguage] || ".txt";
 
   return (
     <div className="edpanel">

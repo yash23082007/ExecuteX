@@ -51,11 +51,6 @@ export default function TopNavigation() {
 
   useEffect(() => { if (open && searchRef.current) searchRef.current.focus(); }, [open]);
 
-  useEffect(() => {
-    const fn = (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runCode(); } };
-    document.addEventListener("keydown", fn);
-    return () => document.removeEventListener("keydown", fn);
-  }, [runCode]);
 
   const filtered = languages.filter(
     (l) => l.displayName.toLowerCase().includes(q.toLowerCase()) || l.category.toLowerCase().includes(q.toLowerCase())
