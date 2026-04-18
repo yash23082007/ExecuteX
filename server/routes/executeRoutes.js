@@ -1,18 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { z } = require("zod");
-const { Redis } = require("@upstash/redis");
 const rateLimit = require('express-rate-limit');
 const { executeCode } = require("../services/executionService");
-
-// Initialize Upstash Redis safely
-let redis = null;
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-  redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  });
-}
 
 const executeLimiter = rateLimit({
   windowMs: 60 * 1000,  // 1 minute
@@ -55,7 +45,7 @@ router.post("/execute", executeLimiter, async (req, res) => {
   }
 
   try {
-    const data = await executeCode(parsed.data, redis);
+    const data = await executeCode(parsed.data);
     return res.status(200).json(data);
   } catch (error) {
     console.error("[Execution Controller] Failed:", error.message);
