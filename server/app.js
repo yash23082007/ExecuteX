@@ -2,15 +2,20 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const shareRoutes = require("./routes/shareRoutes");
-const executeRoutes = require("./routes/executeRoutes");
+const executeRoutes = require("./routes/executeRoutes");        
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5173").split(",");
-
-app.use(cors({
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs       
+  message: { success: false, error: "Too many requests, please try again later." }
+});
+app.use(limiter);
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) callback(null, true);
     else callback(new Error("Not allowed by CORS"));
