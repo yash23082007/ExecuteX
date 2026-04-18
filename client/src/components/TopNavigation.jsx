@@ -21,10 +21,7 @@ export default function TopNavigation() {
     selectedLanguage, languages, isRunning, theme, fontSize,
     runCode, setLanguage, toggleTheme, setFontSize, toggleAbout,
     isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet, code
-
-  const isSharedView = !!new URLSearchParams(window.location.search).get("s");
-
-  useEffect(() => {
+  } = useCompilerStore();
     if (shareUrl) {
       navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
