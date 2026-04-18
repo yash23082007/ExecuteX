@@ -4,24 +4,6 @@
 const Snippet = require("../models/Snippet");
 const { nanoid } = require("nanoid");
 const { z } = require("zod");
-const { Ratelimit } = require("@upstash/ratelimit");
-const { Redis } = require("@upstash/redis");
-
-// Initialize Upstash Redis & Ratelimiter
-let ratelimit;
-try {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    ratelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
-      limiter: Ratelimit.slidingWindow(10, '1 m'), // 10 requests/min per IP
-      analytics: true,
-    });
-  } else {
-    console.warn("Upstash Redis not configured, rate limiting disabled.");
-  }
-} catch {
-  console.warn("Upstash Redis not configured, rate limiting disabled.");
-}
 
 const ShareSchema = z.object({
   language: z.string().min(1).max(50),
@@ -34,15 +16,6 @@ const ShareSchema = z.object({
  * Returns: { success: true, share: { slug: "xt78qz1a" } }
  */
 async function createShare(req, res) {
-  // Rate limiting check
-  if (ratelimit) {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
-    const { success } = await ratelimit.limit(ip);
-    if (!success) {
-      return res.status(429).json({ success: false, error: 'Too many requests' });
-    }
-  }
-
   const parsed = ShareSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({
@@ -83,7 +56,7 @@ async function createShare(req, res) {
 async function getShare(req, res) {
   const slugSchema = z.string().min(1).max(50).regex(/^[a-zA-Z0-9_-]+$/);
   const parsed = slugSchema.safeParse(req.params.slug);
-  if (!parsed.success) return res.status(400).json({ success: false, error: "Invalid slug" });
+  if (!parsed.success) return res.status(400).json({ success: false, error: "invalid slug" });
 
   const slug = parsed.data;
 
@@ -114,4 +87,3 @@ async function getShare(req, res) {
 }
 
 module.exports = { createShare, getShare };
-
