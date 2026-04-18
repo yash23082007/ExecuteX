@@ -62,5 +62,8 @@ router.post("/execute", executeLimiter, async (req, res) => {
     if (error.message.includes("queue is full")) {
       return res.status(429).json({ error: "Server is busy. Please try again later." });
     }
+    return res.status(500).json({ error: "Internal execution error." });
+  }
+});
 
 module.exports = router;
