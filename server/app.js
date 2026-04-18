@@ -9,6 +9,9 @@ const executeRoutes = require("./routes/executeRoutes");
 
 const app = express();
 
+app.set('trust proxy', 1); // important for rate limiter on Vercel
+app.use(cors());
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -17,16 +20,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5173").split(",");
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
-    else callback(new Error("Not allowed by CORS"));
-  },
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-}));
+// Optional advanced CORS can go here in the future if needed
 
 app.use(helmet({
   contentSecurityPolicy: false,
