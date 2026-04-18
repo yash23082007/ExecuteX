@@ -72,6 +72,7 @@ const useCompilerStore = create(
   // ── Output State ──
   output: "",
   isRunning: false,
+  isLoadingSnippet: false,
   executionTime: null,
   hasError: false,
   timedOut: false,
@@ -86,12 +87,12 @@ const useCompilerStore = create(
   shareError: null,
 
   // ── Actions ──
-  setCode: (code) => set({ code, isForked: false }),
+  setCode: (code) => set({ code }),
   setStdin: (stdin) => set({ stdin }),
   
   forkSnippet: () => {
     // Treat the current code as a new snippet
-    set({ shareUrl: null, shareError: null, isForked: true });
+    set({ shareUrl: null, shareError: null });
     // Remove ?s= from URL to signify it's disconnected from the read-only view
     window.history.replaceState({}, document.title, "/");
   },
@@ -169,15 +170,12 @@ const useCompilerStore = create(
       const data = await res.json();
       const executionTime = Date.now() - startTime;
 
-      let finalOutput = "";
-      let isError = false;
+      const compilerOutput = data.compiler_error || data.compiler_message || "";
+      const programOutput  = data.program_output || data.program_message || "";
+      const exitCode       = parseInt(data.status ?? "0", 10);
 
-      if (data.status !== "0" && (data.compiler_error || data.program_error)) {
-        finalOutput = data.compiler_error ? data.compiler_error : data.program_error;
-        isError = true;
-      } else {
-        finalOutput = data.program_output || "(No output)";
-      }
+      const isError = exitCode !== 0;
+      const finalOutput = [compilerOutput, programOutput].filter(Boolean).join("\n").trim() || "(No output)";
 
       set((state) => ({
         output: finalOutput,
@@ -241,7 +239,7 @@ const useCompilerStore = create(
   loadSharedSnippet: async (slug) => {
     try {
       // Show loading indicator in output
-      set({ output: "Loading shared snippet...", isRunning: true });
+      set({ output: "Loading shared snippet...", isLoadingSnippet: true });
       const res = await fetch(`${API_BASE}/share/${slug}`);
       const data = await res.json();
 
@@ -250,13 +248,13 @@ const useCompilerStore = create(
           selectedLanguage: data.share.language,
           code: data.share.code,
           output: "Snippet loaded successfully.",
-          isRunning: false,
+          isLoadingSnippet: false,
         });
       } else {
-        set({ output: data.error || "Failed to load snippet.", hasError: true, isRunning: false });
+        set({ output: data.error || "Failed to load snippet.", hasError: true, isLoadingSnippet: false });
       }
     } catch  {
-      set({ output: "Failed to connect to the server.", hasError: true, isRunning: false });
+      set({ output: "Failed to connect to the server.", hasError: true, isLoadingSnippet: false });
     }
   },
 
@@ -264,7 +262,11 @@ const useCompilerStore = create(
     }),
     {
       name: "executex-editor-storage",
-      partialize: (state) => ({ code: state.code, selectedLanguage: state.selectedLanguage, theme: state.theme }),
+      partialize: (state) => ({ 
+        code: state.code ? state.code.slice(0, 10000) : "", // Max 10KB code stored local
+        selectedLanguage: state.selectedLanguage, 
+        theme: state.theme 
+      }),
     }
   )
 );

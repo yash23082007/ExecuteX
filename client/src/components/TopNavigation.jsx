@@ -28,13 +28,15 @@ export default function TopNavigation() {
 
   const isSharedView = !!new URLSearchParams(window.location.search).get("s");
 
-  const handleCopyLink = () => {
+  useEffect(() => {
     if (shareUrl) {
-      navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
     }
-  };
+  }, [shareUrl]);
+
   const [q, setQ] = useState("");
   const ddRef = useRef(null);
   const searchRef = useRef(null);
@@ -145,12 +147,9 @@ export default function TopNavigation() {
           </div>
         )}
 
-        {/* Auto-copy effect to make it premium */}
-        {shareUrl && !copied && handleCopyLink()}
-
         <button className={`run ${isRunning ? "run--active" : ""}`} onClick={runCode} disabled={isRunning || isSharing}>
           {isRunning ? (
-            <><div className="run__spin" /><span>Compiling...</span></>
+            <><div className="run__spin" /><span>{new Set(["python", "ruby", "bash", "lua", "perl", "r", "julia", "javascript", "typescript"]).has(selectedLanguage) ? "Running..." : "Compiling..."}</span></>
           ) : (
             <><Play size={12} fill="currentColor" strokeWidth={0} /><span>Run Code</span></>
           )}

@@ -32,7 +32,7 @@ export default function AboutModal() {
               </svg>
             </div>
             <h1 className="about__hero-title">Execute<span className="about__hero-x">X</span></h1>
-            <p className="about__hero-sub">20-Language Online Compiler Platform</p>
+            <p className="about__hero-sub">18-Language Online Compiler Platform</p>
             <div className="about__hero-author">
               <span className="about__author-label">Developed by</span>
               <span className="about__author-name">Yash Vijay</span>
@@ -47,7 +47,7 @@ export default function AboutModal() {
           <section className="about__stats">
             <div className="stat-card">
               <div className="stat-card__icon stat-card__icon--purple"><Code2 size={16} /></div>
-              <div className="stat-card__value">20</div>
+              <div className="stat-card__value">18</div>
               <div className="stat-card__label">Languages</div>
             </div>
             <div className="stat-card">
@@ -72,7 +72,7 @@ export default function AboutModal() {
             <h2 className="about__heading"><span className="about__heading-num">01</span>Abstract</h2>
             <p className="about__text">
               ExecuteX is a production-grade, security-hardened online code execution platform that provides 
-              an ephemeral compilation environment for 20 programming languages. The system leverages 
+              an ephemeral compilation environment for 18 programming languages. The system leverages 
               Docker containerization with Alpine Linux base images to achieve sub-second boot times 
               while maintaining strict resource isolation through memory limits, CPU throttling, 
               network isolation, and filesystem sandboxing.

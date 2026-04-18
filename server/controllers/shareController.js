@@ -81,7 +81,11 @@ async function createShare(req, res) {
  * Returns: { success: true, share: { language: "python", code: "print('hello')" } }
  */
 async function getShare(req, res) {
-  const { slug } = req.params;
+  const slugSchema = z.string().min(1).max(50).regex(/^[a-zA-Z0-9_-]+$/);
+  const parsed = slugSchema.safeParse(req.params.slug);
+  if (!parsed.success) return res.status(400).json({ success: false, error: "Invalid slug" });
+
+  const slug = parsed.data;
 
   try {
     const snippet = await Snippet.findOne({ slug });

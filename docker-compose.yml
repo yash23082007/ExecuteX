@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  api:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile # Ensure a server Dockerfile exists
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
