@@ -155,10 +155,12 @@ export default function TopNavigation() {
 
       {/* ── Right ── */}
       <div className="nav__right">
-        <div className="fsize">
+        <div className="fsize" title="Font Size">
+          <span style={{ fontSize: "0.75em", marginRight: "6px", opacity: 0.7, fontWeight: 600 }}>A</span>
           <button className="fsize__btn" onClick={() => setFontSize(fontSize - 1)}><Minus size={11} /></button>
           <span className="fsize__val">{fontSize}</span>
           <button className="fsize__btn" onClick={() => setFontSize(fontSize + 1)}><Plus size={11} /></button>
+          <span style={{ fontSize: "1.1em", marginLeft: "6px", opacity: 0.7, fontWeight: 600 }}>A</span>
         </div>
 
         <button className="nav__about-btn" onClick={toggleAbout} title="About ExecuteX">
