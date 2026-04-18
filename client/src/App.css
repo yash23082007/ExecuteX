@@ -23,3 +23,16 @@
   overflow: hidden;
   position: relative;
 }
+
+@media (max-width: 768px) {
+  .workspace {
+    flex-direction: column !important;
+  }
+  #editor-pane, #terminal-pane {
+    width: 100% !important;
+    height: 50% !important;
+  }
+  .gutter-horizontal {
+    display: none;
+  }
+}

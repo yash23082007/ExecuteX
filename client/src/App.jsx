@@ -25,12 +25,12 @@ function App() {
   }, [loadSharedSnippet]);
 
   useEffect(() => {
-    const split = Split(["#editor-pane", "#terminal-pane"], {
-      direction: "horizontal",
+    const isMobile = window.innerWidth <= 768;
+    const split = Split(["#editor-pane", "#terminal-pane"], {   
+      direction: isMobile ? "vertical" : "horizontal",
       sizes: [55, 45],
-      minSize: [320, 280],
-      gutterSize: 3,
-      snapOffset: 0,
+      minSize: isMobile ? [200, 200] : [320, 280],
+      gutterSize: isMobile ? 0 : 3,
       dragInterval: 1,
     });
 
