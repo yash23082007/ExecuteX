@@ -20,11 +20,7 @@ export default function TopNavigation() {
   const {
     selectedLanguage, languages, isRunning, theme, fontSize,
     runCode, setLanguage, toggleTheme, setFontSize, toggleAbout,
-    isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet
-  } = useCompilerStore();
-
-  const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+    isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet, code
 
   const isSharedView = !!new URLSearchParams(window.location.search).get("s");
 
@@ -99,7 +95,15 @@ export default function TopNavigation() {
                     <div className="dd__cat"><span className="dd__cat-ico">{CAT_ICON[cat] || "•"}</span>{cat}</div>
                     {langs.map((l) => (
                       <button key={l.key} className={`dd__item ${l.key === selectedLanguage ? "active" : ""}`}
-                        onClick={() => { setLanguage(l.key); setOpen(false); setQ(""); }}>
+                        onClick={() => {
+                          const isModified = code !== lang?.boilerplate;
+                          if (isModified && !window.confirm("Changing language will discard your current code. Are you sure?")) {
+                            return;
+                          }
+                          setLanguage(l.key);
+                          setOpen(false);
+                          setQ("");
+                        }}>
                         <span>{l.displayName}</span>
                         {l.key === selectedLanguage && <Check size={12} className="dd__check" />}
                       </button>
