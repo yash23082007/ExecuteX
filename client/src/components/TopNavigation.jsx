@@ -22,13 +22,10 @@ export default function TopNavigation() {
     runCode, setLanguage, toggleTheme, setFontSize, toggleAbout,
     isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet, code
   } = useCompilerStore();
-    if (shareUrl) {
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    }
-  }, [shareUrl]);
+
+  const isSharedView = typeof window !== 'undefined' && window.location.pathname.startsWith('/s/');
+  const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [q, setQ] = useState("");
   const ddRef = useRef(null);
@@ -131,9 +128,24 @@ export default function TopNavigation() {
         )}
 
         {shareUrl && (
-          <div className="share-toast">
-            <span className="share-toast__text">Link copied to clipboard!</span>
-            <button className="share-toast__close" onClick={clearShareState}><X size={12}/></button>
+          <div className="share-toast" style={{display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'var(--c-bg)', border: '1px solid var(--c-bord)', borderRadius: '4px'}}>
+            <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="share-toast__text" style={{fontSize: '0.85em', color: 'var(--c-fg)', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textDecoration: 'none'}}>{shareUrl}</a>
+            <button 
+              className="share-toast__copy" 
+              onClick={() => {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                });
+              }}
+              style={{background: 'var(--c-btn)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', color: 'var(--c-fg)', cursor: 'pointer', padding: '6px', borderRadius: '4px'}}
+              title="Copy URL"
+            >
+              {copied ? <Check size={14} color="#10b981"/> : <Copy size={14}/>}
+            </button>
+            <button className="share-toast__close" onClick={clearShareState} style={{background: 'none', border: 'none', color: 'var(--c-sub)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems:'center', justifyContent: 'center'}}>
+              <X size={14}/>
+            </button>
           </div>
         )}
         {shareError && (
