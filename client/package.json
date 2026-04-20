@@ -19,8 +19,8 @@
     "helmet": "^8.1.0",
     "lucide-react": "^1.7.0",
     "prettier": "^3.8.3",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "split.js": "^1.6.5",
     "tailwindcss": "^4.2.2",
     "zustand": "^5.0.12"
