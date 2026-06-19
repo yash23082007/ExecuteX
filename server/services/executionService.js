@@ -1,7 +1,7 @@
 // server/services/executionService.js
 // Execution service — proxies code to Wandbox with concurrency throttling and Piston fallback
 
-const PQueue = require("p-queue");
+const { default: PQueue } = require("p-queue");
 
 // Bounded queue: max 5 concurrent outbound requests
 const executionQueue = new PQueue({ concurrency: 5 });
