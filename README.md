@@ -12,7 +12,7 @@ ExecuteX is a high-performance, serverless code execution environment designed f
 
 *   **18 Supported Languages**: From Core CS (C/C++, Java) to Modern Systems (Rust, Go) and Data Science (Python, R, Julia).
 *   **Wandbox API Integration**: Blazing fast serverless execution powered by the Wandbox compiler engine.
-*   **Zero-Latency Pinging**: Browser-to-compiler architecture eliminates backend middleman latency.
+*   **Sub-Second Execution**: Validated server-side proxy to Wandbox with rate limiting, input validation, and concurrency throttling — fast round-trips without exposing the compiler API directly.
 *   **Rich IDE Experience**: Powered by the **Monaco Editor** (the engine behind VS Code) with syntax highlighting and theme support.
 *   **Snippet Sharing**: Generate unique URLs for your code snippets to share with others.
 *   **Premium UI**: Dark-mode first, glassmorphism design for modern aesthetics.
@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### Tech Stack
 *   **Frontend**: React 18, Vite, Zustand, Monaco Editor.    
-*   **Compiler Engine**: Wandbox API (Directly from Browser)
+*   **Compiler Engine**: Wandbox API (via server-side validated proxy)
 *   **Backend (Sharing)**: Vercel Serverless Functions (Node.js/Express)
 *   **Database**: MongoDB (Code Sharing)
 *   **Hosting**: Vercel

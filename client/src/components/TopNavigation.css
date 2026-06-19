@@ -387,3 +387,104 @@
   left: 18px;
   background: linear-gradient(135deg, #f59e0b, #f97316);
 }
+
+/* ── AI Toggle ─────────────────────────────────────────── */
+.ai-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 1;
+  transition: opacity var(--dur) var(--ease);
+}
+.ai-toggle:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.ai-toggle__track {
+  width: 36px;
+  height: 20px;
+  background: var(--ex-bg-5);
+  border: 1px solid var(--ex-border-1);
+  border-radius: var(--ex-r-pill);
+  position: relative;
+  transition: all var(--dur) var(--ease);
+  box-shadow: var(--ex-shadow-inset);
+}
+.ai-toggle:hover:not(:disabled) .ai-toggle__track {
+  border-color: var(--ex-border-focus);
+}
+.ai-toggle--on .ai-toggle__track {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+.ai-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--ex-bg-4);
+  border: 1px solid var(--ex-border-1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ex-text-3);
+  transition: all var(--dur) var(--ease-spring);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.ai-toggle__knob--on {
+  left: 18px;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.4), 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.ai-toggle__label {
+  font: 600 10px/1 var(--font-body);
+  color: var(--ex-text-3);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  user-select: none;
+}
+.ai-toggle--on .ai-toggle__label {
+  color: #a855f7;
+}
+
+/* ── AI Review Button ──────────────────────────────────── */
+.nav__ai-review-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--ex-bg-3);
+  border: 1px solid var(--ex-border-1);
+  border-radius: var(--ex-r-sm);
+  color: var(--ex-text-2);
+  font: 500 11px/1 var(--font-body);
+  cursor: pointer;
+  transition: all var(--dur) var(--ease);
+  box-shadow: var(--ex-shadow-inset);
+}
+.nav__ai-review-btn:hover:not(:disabled) {
+  background: var(--ex-accent-subtle);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+.nav__ai-review-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.nav__ai-review-label {
+  display: none;
+}
+@media (min-width: 768px) {
+  .nav__ai-review-label {
+    display: inline;
+  }
+}
+

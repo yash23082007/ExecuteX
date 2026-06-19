@@ -1,6 +1,17 @@
 // api/index.js — Vercel Serverless Entry Point
 require("dotenv").config();
+const Sentry = require("@sentry/node");
 const mongoose = require("mongoose");
+
+// ── Sentry Initialization (serverless) ──
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || "production",
+    tracesSampleRate: 0.2,
+  });
+}
+
 const app = require("../server/app");
 
 const MONGO_URI = process.env.MONGO_URI || "";
@@ -22,6 +33,9 @@ async function connectToDatabase() {
     return cachedDb;
   } catch (err) {
     console.error("[Serverless] MongoDB connection failed:", err.message);
+    if (process.env.SENTRY_DSN) {
+      Sentry.captureException(err);
+    }
     throw err;
   }
 }
@@ -31,7 +45,7 @@ app.use(async (req, res, next) => {
   if (req.url.startsWith("/api/v1/share")) {
     try {
       await connectToDatabase();
-    } catch (e) {
+    } catch {
       console.warn("DB not ready, proceeding without it.");
     }
   }

@@ -1,28 +1,57 @@
 // src/components/EditorWorkspace.jsx
-// Premium editor with panel header, breadcrumb-style tab, refined themes
+// Premium editor with AI inline completions and review panel
 
-import React, { useRef, useCallback, Suspense } from "react";
+import React, { useRef, useCallback, useEffect, Suspense } from "react";
 // Lazy load Monaco editor to reduce initial bundle size
 const Editor = React.lazy(() => import("@monaco-editor/react"));
-import { FileCode2 } from "lucide-react";
+import { FileCode2, X, AlertTriangle, Bug, Lightbulb, Loader2 } from "lucide-react";
 import useCompilerStore from "../store/useCompilerStore";
 import { FILE_EXT } from "../constants/languages";
 import "./EditorWorkspace.css";
+
+const API_BASE = "/api/v1";
+
+// Severity icons for AI review suggestions
+const SEVERITY_ICON = {
+  bug: Bug,
+  warning: AlertTriangle,
+  improvement: Lightbulb,
+};
+const SEVERITY_CLASS = {
+  bug: "ai-review__sev--bug",
+  warning: "ai-review__sev--warning",
+  improvement: "ai-review__sev--improvement",
+};
 
 export default function EditorWorkspace() {
   const { code, setCode, selectedLanguage, monacoLangMap, theme, fontSize } =
     useCompilerStore();
   const runCode = useCompilerStore((state) => state.runCode);
+  const aiSuggestionsEnabled = useCompilerStore((state) => state.aiSuggestionsEnabled);
+  const aiReview = useCompilerStore((state) => state.aiReview);
+  const clearAIReview = useCompilerStore((state) => state.clearAIReview);
+
   const editorRef = useRef(null);
+  const monacoRef = useRef(null);
+  const aiEnabledRef = useRef(aiSuggestionsEnabled);
+  const completionDisposableRef = useRef(null);
+
+  // Keep the ref in sync with the store value
+  useEffect(() => {
+    aiEnabledRef.current = aiSuggestionsEnabled;
+  }, [aiSuggestionsEnabled]);
 
   const handleMount = useCallback((editor, monaco) => {
     editorRef.current = editor;
+    monacoRef.current = monaco;
+
     editor.addAction({
       id: "executex-run", label: "Run Code",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
       run: () => runCode(),
     });
 
+    // ── Custom Themes ──
     monaco.editor.defineTheme("ex-dark", {
       base: "vs-dark", inherit: true,
       rules: [
@@ -108,8 +137,125 @@ export default function EditorWorkspace() {
       },
     });
 
+    // ── AI Inline Completions Provider ──
+    let activeController = null;
+    let debounceTimer = null;
+
+    const provider = {
+      provideInlineCompletions: async (model, position, context, token) => {
+        // Check if AI is enabled via ref (avoids re-registering on toggle)
+        if (!aiEnabledRef.current) {
+          return { items: [] };
+        }
+
+        // Cancel any previous in-flight request
+        if (activeController) {
+          activeController.abort();
+          activeController = null;
+        }
+
+        // Debounce: wait 300ms of idle before calling the API
+        if (debounceTimer) clearTimeout(debounceTimer);
+
+        return new Promise((resolve) => {
+          debounceTimer = setTimeout(async () => {
+            // Check cancellation token
+            if (token.isCancellationRequested) {
+              resolve({ items: [] });
+              return;
+            }
+
+            const fullText = model.getValue();
+            const offset = model.getOffsetAt(position);
+            const prefix = fullText.slice(0, offset);
+            const suffix = fullText.slice(offset);
+
+            // Don't call AI for very short prefixes
+            if (prefix.trim().length < 3) {
+              resolve({ items: [] });
+              return;
+            }
+
+            activeController = new AbortController();
+
+            try {
+              const res = await fetch(`${API_BASE}/ai/complete`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  language: useCompilerStore.getState().selectedLanguage,
+                  prefix: prefix.slice(-4096), // last 4KB of prefix
+                  suffix: suffix.slice(0, 2048), // first 2KB of suffix
+                }),
+                signal: activeController.signal,
+              });
+
+              if (!res.ok) {
+                resolve({ items: [] });
+                return;
+              }
+
+              const data = await res.json();
+
+              if (data.success && data.completion && data.completion.trim()) {
+                resolve({
+                  items: [
+                    {
+                      insertText: data.completion,
+                      range: {
+                        startLineNumber: position.lineNumber,
+                        startColumn: position.column,
+                        endLineNumber: position.lineNumber,
+                        endColumn: position.column,
+                      },
+                    },
+                  ],
+                });
+              } else {
+                resolve({ items: [] });
+              }
+            } catch {
+              // AbortError or network error — silently resolve empty
+              resolve({ items: [] });
+            } finally {
+              activeController = null;
+            }
+          }, 300);
+        });
+      },
+
+      freeInlineCompletions: () => {
+        // No-op: nothing to free
+      },
+    };
+
+    // Register the provider for all languages
+    completionDisposableRef.current = monaco.languages.registerInlineCompletionsProvider(
+      { pattern: "**" },
+      provider
+    );
+
     editor.focus();
   }, [runCode]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (completionDisposableRef.current) {
+        completionDisposableRef.current.dispose();
+        completionDisposableRef.current = null;
+      }
+    };
+  }, []);
+
+  // Handle clicking an AI review suggestion — navigate to the line
+  const handleSuggestionClick = useCallback((line) => {
+    if (editorRef.current && line) {
+      editorRef.current.revealLineInCenter(line);
+      editorRef.current.setPosition({ lineNumber: line, column: 1 });
+      editorRef.current.focus();
+    }
+  }, []);
 
   const ext = FILE_EXT[selectedLanguage] || ".txt";
 
@@ -130,6 +276,55 @@ export default function EditorWorkspace() {
           <span className="edpanel__tab-modified" />
         </div>
       </div>
+
+      {/* AI Review Panel */}
+      {aiReview.open && (
+        <div className="ai-review">
+          <div className="ai-review__header">
+            <span className="ai-review__title">✨ AI Review</span>
+            <button className="ai-review__close" onClick={clearAIReview} aria-label="Close AI review">
+              <X size={12} />
+            </button>
+          </div>
+          <div className="ai-review__body">
+            {aiReview.loading ? (
+              <div className="ai-review__loading">
+                <Loader2 size={14} className="ai-review__spinner" />
+                <span>Analyzing your code...</span>
+              </div>
+            ) : aiReview.error ? (
+              <div className="ai-review__error">{aiReview.error}</div>
+            ) : aiReview.suggestions.length === 0 ? (
+              <div className="ai-review__empty">No issues found — your code looks good! 🎉</div>
+            ) : (
+              <div className="ai-review__list">
+                {aiReview.suggestions.map((s, i) => {
+                  const Icon = SEVERITY_ICON[s.severity] || Lightbulb;
+                  return (
+                    <button
+                      key={i}
+                      className="ai-review__item"
+                      onClick={() => handleSuggestionClick(s.line)}
+                    >
+                      <div className={`ai-review__sev ${SEVERITY_CLASS[s.severity] || ""}`}>
+                        <Icon size={12} />
+                      </div>
+                      <div className="ai-review__content">
+                        <div className="ai-review__item-title">
+                          <span className="ai-review__line">L{s.line}</span>
+                          {s.title}
+                        </div>
+                        {s.detail && <div className="ai-review__detail">{s.detail}</div>}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="edpanel__body">
         <Suspense fallback={
           <div className="edpanel__loading">
@@ -165,6 +360,7 @@ export default function EditorWorkspace() {
               bracketPairColorization: { enabled: true },
               guides: { bracketPairs: true, indentation: true },
               suggest: { showWords: false },
+              inlineSuggest: { enabled: true },
               overviewRulerBorder: false,
               hideCursorInOverviewRuler: true,
               overviewRulerLanes: 0,

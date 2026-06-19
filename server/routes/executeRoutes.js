@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { z } = require("zod");
-const rateLimit = require('express-rate-limit');
+const { createLimiter } = require("../utils/rateLimiter");
 const { executeCode } = require("../services/executionService");
 
-const executeLimiter = rateLimit({
+const executeLimiter = createLimiter({
   windowMs: 60 * 1000,  // 1 minute
   max: 15,              // 15 executions per minute per IP
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many executions. Please wait a minute." }
+  message: { error: "Too many executions. Please wait a minute." },
+  keyPrefix: "execute"
 });
 
 const VALID_COMPILERS = new Set([
@@ -51,6 +50,12 @@ router.post("/execute", executeLimiter, async (req, res) => {
     console.error("[Execution Controller] Failed:", error.message);
     if (error.message.includes("queue is full")) {
       return res.status(429).json({ error: "Server is busy. Please try again later." });
+    }
+    if (error.isDegraded) {
+      return res.status(503).json({
+        error: error.message,
+        degraded: true,
+      });
     }
     return res.status(500).json({ error: "Internal execution error." });
   }

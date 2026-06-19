@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import {
-  Play, ChevronDown, Sun, Moon, Search, X, Minus, Plus, Check, Info, Link, Copy, Edit2,
+  Play, ChevronDown, Sun, Moon, Search, X, Minus, Plus, Check, Info, Link, Copy, Edit2, Sparkles, MessageSquare,
 } from "lucide-react";
 import useCompilerStore from "../store/useCompilerStore";
 import "./TopNavigation.css";
@@ -20,7 +20,8 @@ export default function TopNavigation() {
   const {
     selectedLanguage, languages, isRunning, theme, fontSize,
     runCode, setLanguage, toggleTheme, setFontSize, toggleAbout,
-    isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet, code
+    isSharing, shareUrl, shareError, shareCode, clearShareState, forkSnippet, code,
+    aiSuggestionsEnabled, aiStatus, aiReview, toggleAISuggestions, runAIReview, checkAIStatus,
   } = useCompilerStore();
 
   const isSharedView = typeof window !== 'undefined' && window.location.pathname.startsWith('/s/');
@@ -32,6 +33,13 @@ export default function TopNavigation() {
   const searchRef = useRef(null);
 
   const lang = languages.find((l) => l.key === selectedLanguage);
+
+  // Check AI availability on mount
+  useEffect(() => {
+    if (!aiStatus.checked) {
+      checkAIStatus();
+    }
+  }, [aiStatus.checked, checkAIStatus]);
 
   useEffect(() => {
     const fn = (e) => { if (ddRef.current && !ddRef.current.contains(e.target)) { setOpen(false); setQ(""); } };
@@ -70,7 +78,7 @@ export default function TopNavigation() {
 
         {/* Language */}
         <div className="lang" ref={ddRef}>
-          <button className="lang__btn" onClick={() => { setOpen(!open); setQ(""); }}>
+          <button className="lang__btn" onClick={() => { setOpen(!open); setQ(""); }} aria-label="Select language" aria-expanded={open}>
             <span className="lang__dot" />
             <span className="lang__label">{lang?.displayName}</span>
             <ChevronDown size={11} className={`lang__chev ${open ? "up" : ""}`} />
@@ -114,11 +122,11 @@ export default function TopNavigation() {
       {/* ── Center ── */}
       <div className="nav__center">
         {isSharedView ? (
-          <button className="run share-btn" onClick={forkSnippet}>
+          <button className="run share-btn" onClick={forkSnippet} aria-label="Fork snippet">
             <Edit2 size={12} fill="currentColor" strokeWidth={0} /><span>Fork Snippet</span>
           </button>
         ) : (
-          <button className={`run share-btn ${isSharing ? "run--active" : ""}`} onClick={shareCode} disabled={isSharing || isRunning}>
+          <button className={`run share-btn ${isSharing ? "run--active" : ""}`} onClick={shareCode} disabled={isSharing || isRunning} aria-label="Share code">
             {isSharing ? (
               <><div className="run__spin" /><span>Sharing...</span></>
             ) : (
@@ -140,10 +148,11 @@ export default function TopNavigation() {
               }}
               style={{background: 'var(--c-btn)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', color: 'var(--c-fg)', cursor: 'pointer', padding: '6px', borderRadius: '4px'}}
               title="Copy URL"
+              aria-label="Copy share URL"
             >
               {copied ? <Check size={14} color="#10b981"/> : <Copy size={14}/>}
             </button>
-            <button className="share-toast__close" onClick={clearShareState} style={{background: 'none', border: 'none', color: 'var(--c-sub)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems:'center', justifyContent: 'center'}}>
+            <button className="share-toast__close" onClick={clearShareState} style={{background: 'none', border: 'none', color: 'var(--c-sub)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems:'center', justifyContent: 'center'}} aria-label="Dismiss share link">
               <X size={14}/>
             </button>
           </div>
@@ -151,11 +160,11 @@ export default function TopNavigation() {
         {shareError && (
           <div className="share-toast error">
             <span className="share-toast__text">{shareError}</span>
-            <button className="share-toast__close" onClick={clearShareState}><X size={12}/></button>
+            <button className="share-toast__close" onClick={clearShareState} aria-label="Dismiss share error"><X size={12}/></button>
           </div>
         )}
 
-        <button className={`run ${isRunning ? "run--active" : ""}`} onClick={runCode} disabled={isRunning || isSharing}>
+        <button className={`run ${isRunning ? "run--active" : ""}`} onClick={runCode} disabled={isRunning || isSharing} aria-label="Run code">
           {isRunning ? (
             <><div className="run__spin" /><span>{new Set(["python", "ruby", "bash", "lua", "perl", "r", "julia", "javascript", "typescript"]).has(selectedLanguage) ? "Running..." : "Compiling..."}</span></>
           ) : (
@@ -167,19 +176,56 @@ export default function TopNavigation() {
 
       {/* ── Right ── */}
       <div className="nav__right">
+        {/* AI Controls */}
+        <button
+          className={`nav__ai-review-btn ${aiReview.loading ? "run--active" : ""}`}
+          onClick={runAIReview}
+          disabled={!aiStatus.available || aiReview.loading || isRunning}
+          title={aiStatus.available ? "AI Code Review" : "AI not available (no API key)"}
+          aria-label="AI code review"
+        >
+          <MessageSquare size={13} />
+          <span className="nav__ai-review-label">
+            {aiReview.loading ? "Reviewing..." : "Review"}
+          </span>
+        </button>
+
+        <button
+          className={`ai-toggle ${aiSuggestionsEnabled ? "ai-toggle--on" : ""}`}
+          onClick={toggleAISuggestions}
+          disabled={!aiStatus.available}
+          title={
+            !aiStatus.available
+              ? "AI suggestions unavailable (no API key configured)"
+              : aiSuggestionsEnabled
+                ? "Disable AI suggestions"
+                : "Enable AI suggestions"
+          }
+          aria-label={aiSuggestionsEnabled ? "Disable AI suggestions" : "Enable AI suggestions"}
+        >
+          <div className="ai-toggle__track">
+            <div className={`ai-toggle__knob ${aiSuggestionsEnabled ? "ai-toggle__knob--on" : ""}`}>
+              <Sparkles size={9} />
+            </div>
+          </div>
+          <span className="ai-toggle__label">AI</span>
+        </button>
+
+        <span className="nav__sep" />
+
         <div className="fsize" title="Font Size">
           <span style={{ fontSize: "0.75em", marginRight: "6px", opacity: 0.7, fontWeight: 600 }}>A</span>
-          <button className="fsize__btn" onClick={() => setFontSize(fontSize - 1)}><Minus size={11} /></button>
+          <button className="fsize__btn" onClick={() => setFontSize(fontSize - 1)} aria-label="Decrease font size"><Minus size={11} /></button>
           <span className="fsize__val">{fontSize}</span>
-          <button className="fsize__btn" onClick={() => setFontSize(fontSize + 1)}><Plus size={11} /></button>
+          <button className="fsize__btn" onClick={() => setFontSize(fontSize + 1)} aria-label="Increase font size"><Plus size={11} /></button>
           <span style={{ fontSize: "1.1em", marginLeft: "6px", opacity: 0.7, fontWeight: 600 }}>A</span>
         </div>
 
-        <button className="nav__about-btn" onClick={toggleAbout} title="About ExecuteX">
+        <button className="nav__about-btn" onClick={toggleAbout} title="About ExecuteX" aria-label="About ExecuteX">
           <Info size={14} />
         </button>
 
-        <button className="theme-sw" onClick={toggleTheme} title={theme === "dark" ? "Switch to light" : "Switch to dark"}>
+        <button className="theme-sw" onClick={toggleTheme} title={theme === "dark" ? "Switch to light" : "Switch to dark"} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
           <div className="theme-sw__track">
             <div className={`theme-sw__knob ${theme === "light" ? "theme-sw__knob--on" : ""}`}>
               {theme === "dark" ? <Moon size={10} /> : <Sun size={10} />}
